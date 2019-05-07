@@ -1,6 +1,6 @@
 # ncmb_ios-Swift
 
-A private translation of NCMB SDK for iOS (Objective-C) into Swift
+A private translation of NCMB SDK for iOS (ncmb_ios) into Swift
 
 Translated by OOPer in cooperation with shlab.jp, since 2019/5/1.
 
@@ -8,6 +8,8 @@ Based on
 [ncmb_ios](https://github.com/NIFCloud-mbaas/ncmb_ios),
 SDK version 3.0.1 for API version "2013-09-01".
 
+(Not based on ncmb_swift.)
+
 All license terms follow the original license shown in LICENSE-original.txt or in each file.
 
 ## Reasons you should _not_ use this SDK
@@ -21,3 +23,7 @@ All license terms follow the original license shown in LICENSE-original.txt or i
 There may be more.
 
 This repository is being public, as the original SDK is open-sourced.
+
+### Build requirement
+
+Xcode 10.2.1, Swift 5
