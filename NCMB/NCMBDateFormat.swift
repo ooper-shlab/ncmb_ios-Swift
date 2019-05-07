@@ -69,10 +69,12 @@ class NCMBDateFormat {
 // @return ISO 8601形式のNSDateFormatter
 // */
 //+ (NSDateFormatter *) getIso8601DateFormat {
+    //### DateFormatter can be re-used
+    private static let _iso8601DateFormatter = createDateFormater(dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     public static func getIso8601DateFormat() -> DateFormatter {
 //
 //    return [self createDateFormater:@"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"];
-        return createDateFormater(dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        return _iso8601DateFormatter
 //}
     }
 //
@@ -81,10 +83,12 @@ class NCMBDateFormat {
 // @return ファイル名用のNSDateFormatter
 // */
 //+ (NSDateFormatter *) getFileNameDateFormat {
+    //### DateFormatter can be re-used
+    private static let _fileNameDateFormatter = createDateFormater(dateFormat: "yyyyMMddHHmmssSSSS")
     public static func getFileNameDateFormat() -> DateFormatter {
 //
 //    return [self createDateFormater:@"yyyyMMddHHmmssSSSS"];
-        return createDateFormater(dateFormat: "yyyyMMddHHmmssSSSS")
+        return _fileNameDateFormatter
 //}
     }
 //

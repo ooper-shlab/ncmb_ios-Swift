@@ -531,7 +531,7 @@ public class NCMBQuery {
         do {
 //    NSData *json = [NSJSONSerialization dataWithJSONObject:_query
             let json = try JSONSerialization.data(withJSONObject: query,
-                                              options: .prettyPrinted)
+                                                  options: .prettyPrinted)
 //                                                   options:NSJSONWritingPrettyPrinted
 //                                                     error:&error];
             return String(data: json, encoding: .utf8)!
@@ -552,30 +552,30 @@ public class NCMBQuery {
 // @param operand 検索条件
 // */
 //- (void)setCondition:(id)object forKey:(NSString*)key operand:(NSString*)operand{
-    private func setCondition(_ object: Any, forKey key: String, operand: String?) {
+    private func setCondition(_ object: Any, forKey key: String, operator ope: String?) {
 //    if ([operand isEqualToString:@"$eq"]){
-        if operand == "$eq" {
+        if ope == "$eq" {
 //        //equalToの場合、オペランドはないので値を直接設定する
 //        //他の条件と組み合わせ不可なので、既存の設定を無視して上書きする
 //        [_query setObject:[self convertToJSONFromNCMBObject:object] forKey:key];
             query[key] = self.convertToJSONFromNCMBObject(object)
 //    } else if ([key isEqualToString:@"$or"] && operand == nil){
-        } else if key == "$or" && operand == nil {
+        } else if key == "$or" && ope == nil {
 //        //or検索の場合、オペランドがキーに設定される
 //        [_query setObject:[self convertToJSONFromNCMBObject:object] forKey:key];
             query[key] = self.convertToJSONFromNCMBObject(object)
 //    } else if ([key isEqualToString:@"$relatedTo"] && operand == nil){
-        } else if key == "$relatedTo" && operand == nil {
+        } else if key == "$relatedTo" && ope == nil {
 //        //relatedToの場合、オペランドがキーに設定される
 //        [_query setObject:object forKey:key];
             query[key] = object
 //    } else {
         } else {
 //        if ([[_query allKeys] containsObject:key]){
-            guard let operand = operand else {
+            guard let operand = ope else {
                 fatalError("operand must not be nil")
             }
-            if var condition = query[key] as? [String: Any] {
+            if var condition = self.query[key] as? [String: Any] {
 //            //既に検索条件が設定されていた場合は統合する
 //            NSMutableDictionary *condition;
 //            condition = [NSMutableDictionary dictionaryWithDictionary:[_query objectForKey:key]];
@@ -603,14 +603,14 @@ public class NCMBQuery {
 //- (void)whereKey:(NSString*)key equalTo:(id)object{
     public func `where`(key: String, equalTo object: Any) {
 //    [self setCondition:object forKey:key operand:@"$eq"];
-        self.setCondition(object, forKey: key, operand: "$eq")
+        self.setCondition(object, forKey: key, operator: "$eq")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key notEqualTo:(id)object{
     public func `where`(key: String, notEqualTo object: Any) {
 //    [self setCondition:object forKey:key operand:@"$ne"];
-        self.setCondition(object, forKey: key, operand: "$ne")
+        self.setCondition(object, forKey: key, operator: "$ne")
 //}
     }
 //
@@ -622,7 +622,7 @@ public class NCMBQuery {
 //- (void)whereKey:(NSString *)key greaterThan:(id)object{
     public func `where`(key: String, greaterThan object: Any) {
 //    [self setCondition:object forKey:key operand:@"$gt"];
-        self.setCondition(object, forKey: key, operand: "$gt")
+        self.setCondition(object, forKey: key, operator: "$gt")
 //}
     }
 //
@@ -634,7 +634,7 @@ public class NCMBQuery {
 //- (void)whereKey:(NSString *)key greaterThanOrEqualTo:(id)object{
     public func `where`(key: String, greaterThanOrEqualTo object: Any) {
 //    [self setCondition:object forKey:key operand:@"$gte"];
-        self.setCondition(object, forKey: key, operand: "$gte")
+        self.setCondition(object, forKey: key, operator: "$gte")
 //}
     }
 //
@@ -646,7 +646,7 @@ public class NCMBQuery {
 //- (void)whereKey:(NSString *)key lessThan:(id)object{
     public func `where`(key: String, lessThan object: Any) {
 //    [self setCondition:object forKey:key operand:@"$lt"];
-        self.setCondition(object, forKey: key, operand: "$lt")
+        self.setCondition(object, forKey: key, operator: "$lt")
 //}
     }
 //
@@ -658,104 +658,104 @@ public class NCMBQuery {
 //- (void)whereKey:(NSString *)key lessThanOrEqualTo:(id)object{
     public func `where`(key: String, lessThanOrEqualTo object: Any) {
 //    [self setCondition:object forKey:key operand:@"$lte"];
-        self.setCondition(object, forKey: key, operand: "$lte")
+        self.setCondition(object, forKey: key, operator: "$lte")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key containedIn:(NSArray *)array{
     public func `where`(key: String, containedIn array: [Any]) {
 //    [self setCondition:array forKey:key operand:@"$in"];
-        self.setCondition(array, forKey: key, operand: "$in")
+        self.setCondition(array, forKey: key, operator: "$in")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key notContainedIn:(NSArray *)array{
     public func `where`(key: String, notContainedIn array: [Any]) {
 //    [self setCondition:array forKey:key operand:@"$nin"];
-        self.setCondition(array, forKey: key, operand: "$nin")
+        self.setCondition(array, forKey: key, operator: "$nin")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key containedInArrayTo:(NSArray *)array{
     public func `where`(key: String, containedInArrayTo array: [Any]) {
 //    [self setCondition:array forKey:key operand:@"$inArray"];
-        self.setCondition(array, forKey: key, operand: "$inArray")
+        self.setCondition(array, forKey: key, operator: "$inArray")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key notContainedInArrayTo:(NSArray *)array{
     public func `where`(key: String, notContainedInArrayTo array: [Any]) {
 //    [self setCondition:array forKey:key operand:@"$ninArray"];
-        self.setCondition(array, forKey: key, operand: "$ninArray")
+        self.setCondition(array, forKey: key, operator: "$ninArray")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key containsAllObjectsInArrayTo:(NSArray *)array{
     public func `where`(key: String, containsAllObjectsInArrayTo array: [Any]) {
 //    [self setCondition:array forKey:key operand:@"$all"];
-        self.setCondition(array, forKey: key, operand: "$all")
+        self.setCondition(array, forKey: key, operator: "$all")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key matchesKey:(NSString *)otherKey inQuery:(NCMBQuery *)query{
     public func `where`(key: String, matchesKey otherKey: String, in query: NCMBQuery) {
 //    [self setCondition:@{@"query":query,@"key":otherKey} forKey:key operand:@"$select"];
-        self.setCondition(["query": query, "key": otherKey], forKey: key, operand: "$select")
+        self.setCondition(["query": query, "key": otherKey], forKey: key, operator: "$select")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key matchesQuery:(NCMBQuery *)query{
     public func `where`(key: String, matches query: NCMBQuery) {
 //    [self setCondition:query forKey:key operand:@"$inQuery"];
-        self.setCondition(query, forKey: key, operand: "$inQuery")
+        self.setCondition(query, forKey: key, operator: "$inQuery")
 //}
     }
 //
 //- (void)whereKeyExists:(NSString *)key{
     public func `where`(keyExists key: String) {
 //    [self setCondition:[NSNumber numberWithBool:YES] forKey:key operand:@"$exists"];
-        self.setCondition(true as NSNumber, forKey: key, operand: "$exists")
+        self.setCondition(true as NSNumber, forKey: key, operator: "$exists")
 //}
     }
 //
 //- (void)whereKeyDoesNotExist:(NSString *)key{
     public func `where`(keyDoesNotExist key: String) {
 //    [self setCondition:[NSNumber numberWithBool:NO] forKey:key operand:@"$exists"];
-        self.setCondition(false as NSNumber, forKey: key, operand: "$exists")
+        self.setCondition(false as NSNumber, forKey: key, operator: "$exists")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key nearGeoPoint:(NCMBGeoPoint *)geoPoint{
     public func `where`(key: String, near geoPoint: NCMBGeoPoint) {
 //    [self setCondition:geoPoint forKey:key operand:@"$nearSphere"];
-        self.setCondition(geoPoint, forKey: key, operand: "$nearSphere")
+        self.setCondition(geoPoint, forKey: key, operator: "$nearSphere")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key nearGeoPoint:(NCMBGeoPoint *)geoPoint withinKilometers:(double)maxDistance{
     public func `where`(key: String, near geoPoint: NCMBGeoPoint, withinKilometers maxDistance: Double) {
 //    [self setCondition:geoPoint forKey:key operand:@"$nearSphere"];
-        self.setCondition(geoPoint, forKey: key, operand: "$nearSphere")
+        self.setCondition(geoPoint, forKey: key, operator: "$nearSphere")
 //    [self setCondition:[NSNumber numberWithDouble:maxDistance] forKey:key operand:@"$maxDistanceInKilometers"];
-        self.setCondition(maxDistance as NSNumber, forKey: key, operand: "$maxDistanceInKilometers")
+        self.setCondition(maxDistance as NSNumber, forKey: key, operator: "$maxDistanceInKilometers")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key nearGeoPoint:(NCMBGeoPoint *)geoPoint withinMiles:(double)maxDistance{
     public func `where`(key: String, near geoPoint: NCMBGeoPoint, withinMiles maxDistance: Double) {
 //    [self setCondition:geoPoint forKey:key operand:@"$nearSphere"];
-        self.setCondition(geoPoint, forKey: key, operand: "$nearSphere")
+        self.setCondition(geoPoint, forKey: key, operator: "$nearSphere")
 //    [self setCondition:[NSNumber numberWithDouble:maxDistance] forKey:key operand:@"$maxDistanceInMiles"];
-        self.setCondition(maxDistance as NSNumber, forKey: key, operand: "$maxDistanceInMiles")
+        self.setCondition(maxDistance as NSNumber, forKey: key, operator: "$maxDistanceInMiles")
 //}
     }
 //
 //- (void)whereKey:(NSString *)key nearGeoPoint:(NCMBGeoPoint *)geoPoint withinRadians:(double)maxDistance{
     public func `where`(key: String, near geoPoint: NCMBGeoPoint, withinRadians maxDistance: Double) {
 //    [self setCondition:geoPoint forKey:key operand:@"$nearSphere"];
-        self.setCondition(geoPoint, forKey: key, operand: "$nearSphere")
+        self.setCondition(geoPoint, forKey: key, operator: "$nearSphere")
 //    [self setCondition:[NSNumber numberWithDouble:maxDistance] forKey:key operand:@"$maxDistanceInRadians"];
-        self.setCondition(maxDistance as NSNumber, forKey: key, operand: "$maxDistanceInRadians")
+        self.setCondition(maxDistance as NSNumber, forKey: key, operator: "$maxDistanceInRadians")
 //}
     }
 //
@@ -766,7 +766,7 @@ public class NCMBQuery {
 //     toNortheast:(NCMBGeoPoint *)northeast{
         toNortheast northeast: NCMBGeoPoint) {
 //    [self setCondition:@{@"$box":@[southwest,northeast]} forKey:key operand:@"$within"];
-        self.setCondition(["$box": [southwest, northeast]], forKey: key, operand: "$within")
+        self.setCondition(["$box": [southwest, northeast]], forKey: key, operator: "$within")
 //}
     }
 //
@@ -801,7 +801,7 @@ public class NCMBQuery {
 //    NCMBQuery *query = [NCMBQuery queryWithClassName:className];
         let query = NCMBQuery(className: className)
 //    [query setCondition:jsonQueries forKey:@"$or" operand:nil];
-        query.setCondition(jsonQueries, forKey: "$or", operand: nil)
+        query.setCondition(jsonQueries, forKey: "$or", operator: nil)
 //
 //    return query;
         return query
@@ -824,7 +824,7 @@ public class NCMBQuery {
 //                                 @"key":key};
             "key": key as Any]
 //    [self setCondition:relatedDic forKey:@"$relatedTo" operand:nil];
-        self.setCondition(relatedDic, forKey: "$relatedTo", operand: nil)
+        self.setCondition(relatedDic, forKey: "$relatedTo", operator: nil)
 //}
     }
 //
@@ -1013,6 +1013,7 @@ public class NCMBQuery {
     }
 //
 //- (void)findObjectsInBackgroundWithTarget:(id)target selector:(SEL)selector{
+    public func findObjectsAsync(target: AnyObject, selector: Selector) {
 //    if (!target || !selector){
 //        [NSException raise:@"NCMBInvalidValueException" format:@"target or selector must not be nil."];
 //    }
@@ -1021,12 +1022,21 @@ public class NCMBQuery {
 //    [invocation setTarget:target];
 //    [invocation setSelector:selector];
 //    [self findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        self.findObjectsAsync {result in
+            switch result {
 //        [invocation retainArguments];
 //        [invocation setArgument:&objects atIndex:2];
 //        [invocation setArgument:&error atIndex:3];
 //        [invocation invoke];
+            case .success(let objects):
+                _ = target.perform(selector, with: objects, with: nil)
+            case .failure(let error):
+                _ = target.perform(selector, with: nil, with: error)
+            }
 //    }];
+        }
 //}
+    }
 //
 //- (NCMBRequest*)createRequestForSearch:(NSMutableDictionary*)queryDic countEnableFlag:(BOOL)countEnableFlag getFirst:(BOOL)getFirstFlag{
     private func createRequestForSearch(_ queryDic: [String: Any], isCountEnabled countEnableFlag: Bool, shouldGetFirst getFirstFlag: Bool) -> NCMBRequest {
@@ -1153,6 +1163,7 @@ public class NCMBQuery {
     }
 //
 //- (void)getFirstObjectInBackgroundWithTarget:(id)target selector:(SEL)selector{
+    public func getFirstObjectAsync(target: AnyObject, selector: Selector) {
 //    if (!target || !selector){
 //        [NSException raise:@"NCMBInvalidValueException" format:@"target or selector must not nil."];
 //    }
@@ -1161,12 +1172,21 @@ public class NCMBQuery {
 //    [invocation setTarget:target];
 //    [invocation setSelector:selector];
 //    [self getFirstObjectInBackgroundWithBlock:^(NCMBObject *object, NSError *error) {
+        self.getFirstObjectAsync {result in
+            switch result {
 //        [invocation retainArguments];
 //        [invocation setArgument:&object atIndex:2];
 //        [invocation setArgument:&error atIndex:3];
 //        [invocation invoke];
+            case .success(let object):
+                _ = target.perform(selector, with: object, with: nil)
+            case .failure(let error):
+                _ = target.perform(selector, with: nil, with: error)
+            }
 //    }];
+        }
 //}
+    }
 //
 //#pragma mark - countObject
 //
@@ -1234,6 +1254,7 @@ public class NCMBQuery {
     }
 //
 //- (void)countObjectsInBackgroundWithTarget:(id)target selector:(SEL)selector{
+    public func countObjectsAsync(target: AnyObject, selector: Selector) {
 //    if (!target || !selector){
 //        [NSException raise:@"NCMBInvalidValueException" format:@"target or selector must not nil."];
 //    }
@@ -1242,12 +1263,21 @@ public class NCMBQuery {
 //    [invocation setTarget:target];
 //    [invocation setSelector:selector];
 //    [self countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+        self.countObjectsAsync {result in
+            switch result {
 //        [invocation retainArguments];
 //        [invocation setArgument:&number atIndex:2];
 //        [invocation setArgument:&error atIndex:3];
 //        [invocation invoke];
+            case .success(let number):
+                _ = target.perform(selector, with: number, with: nil)
+            case .failure(let error):
+                _ = target.perform(selector, with: nil, with: error)
+            }
 //    }];
+        }
 //}
+    }
 //
 //#pragma mark - getObjectWithId
 //
@@ -1325,6 +1355,7 @@ public class NCMBQuery {
     }
 //
 //- (void)getObjectInBackgroundWithId:(NSString *)objectId target:(id)target selector:(SEL)selector{
+    public func getObjectAsync(id objectId: String, target: AnyObject, selector: Selector) {
 //    if (!target || !selector){
 //        [NSException raise:@"NCMBInvalidValueException" format:@"target or selector must not nil."];
 //    }
@@ -1333,12 +1364,21 @@ public class NCMBQuery {
 //    [invocation setTarget:target];
 //    [invocation setSelector:selector];
 //    [self getObjectInBackgroundWithId:objectId block:^(NCMBObject *object, NSError *error) {
+        self.getObjectAsync(id: objectId) {result in
+            switch result {
 //        [invocation retainArguments];
 //        [invocation setArgument:&object atIndex:2];
 //        [invocation setArgument:&error atIndex:3];
 //        [invocation invoke];
+            case .success(let object):
+                _ = target.perform(selector, with: object, with: nil)
+            case .failure(let error):
+                _ = target.perform(selector, with: nil, with: error)
+            }
 //    }];
+        }
 //}
+    }
 //
 //#pragma mark - getObjectWithClass/User
 //
@@ -1390,28 +1430,48 @@ public class NCMBQuery {
 // データ検索時のcachePolicyを設定する
 // */
 //- (void)setCachePolicy:(NSURLRequestCachePolicy)cachePolicy{
+    public func set(cachePolicy: URLRequest.CachePolicy) {
 //    _cachePolicy = cachePolicy;
+        self.cachePolicy = cachePolicy
 //}
+    }
 //
 //+(void)clearAllCachedResults{
+    public static func clearAllCachedResults() {
 //    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+        URLCache.shared.removeAllCachedResponses()
 //}
+    }
 //
 //- (void)clearCachedResult{
+    public func clearCachedResult() {
 //    NCMBRequest *request = [self createRequestForSearch:_query countEnableFlag:NO getFirst:NO];
+        let request = self.createRequestForSearch(query, isCountEnabled: false, shouldGetFirst: false)
 //    NCMBURLSession *session = [[NCMBURLSession alloc] initWithRequestAsync:request];
+        let session = NCMBURLSession(requestAsync: request)
 //    [[NSURLCache sharedURLCache] removeCachedResponseForRequest:session.request];
+        URLCache.shared.removeCachedResponse(for: session.request.urlRequest)
 //}
+    }
 //
 //-(BOOL)hasCachedResult{
+    public func hasCachedResult() -> Bool {
 //    BOOL result = NO;
+        var result = false
 //    NCMBRequest *request = [self createRequestForSearch:_query countEnableFlag:NO getFirst:NO];
+        let request = self.createRequestForSearch(query, isCountEnabled: false, shouldGetFirst: false)
 //    NCMBURLSession *session = [[NCMBURLSession alloc] initWithRequestAsync:request];
+        let session = NCMBURLSession(requestAsync: request)
 //    if([[NSURLCache sharedURLCache] cachedResponseForRequest:session.request] != nil){
+        if URLCache.shared.cachedResponse(for: session.request.urlRequest) != nil {
 //        result = YES;
+            result = true
 //    }
+        }
 //    return result;
+        return result
 //}
+    }
 //
 //
 //
@@ -1522,90 +1582,156 @@ public class NCMBQuery {
 //        return [NSNull null];
             return NSNull()
         }
+        switch obj {
 //    } else if ([obj isKindOfClass:[NSDate class]]){
+        case let dateObj as Date:
 //        //objが日付型だったら
 //        NSMutableDictionary *jsonObj = [NSMutableDictionary dictionary];
 //        [jsonObj setObject:@"Date" forKey:@"__type"];
 //        NSDateFormatter *dateFormatter = [self createNCMBDateFormatter];
+            let dateFormatter = self.createNCMBDateFormatter()
 //        NSString *dateStr = [dateFormatter stringFromDate:obj];
+            let jsonObj: [String: Any] = [
+                "__type": "Date",
 //        [jsonObj setObject:dateStr forKey:@"iso"];
+                "iso": dateFormatter.string(from: dateObj)
+            ]
 //        return jsonObj;
+            return jsonObj
 //    } else if ([obj isKindOfClass:[NCMBGeoPoint class]]){
+        case let geoPoint as NCMBGeoPoint:
 //        //objが位置情報だったら
 //        NCMBGeoPoint *geoPoint = obj;
 //        NSMutableDictionary *jsonObj = [NSMutableDictionary dictionary];
+            let jsonObj: [String: Any] = [
 //        [jsonObj setObject:@"GeoPoint" forKey:@"__type"];
+                "__type": "GeoPoint",
 //        [jsonObj setObject:[NSNumber numberWithDouble:geoPoint.latitude] forKey:@"latitude"];
+                "latitude": geoPoint.latitude,
 //        [jsonObj setObject:[NSNumber numberWithDouble:geoPoint.longitude] forKey:@"longitude"];
+                "longitude": geoPoint.longitude
+            ]
 //        return jsonObj;
+            return jsonObj
 //
 //    } else if ([obj isKindOfClass:[NCMBObject class]]){
+        case let ncmbObj as NCMBObject:
 //        //objがポインタだったら
 //        NCMBObject *ncmbObj = obj;
 //        NSMutableDictionary *jsonObj = [NSMutableDictionary dictionary];
+            let jsonObj: [String: Any] = [
 //        [jsonObj setObject:@"Pointer" forKey:@"__type"];
+                "__type": "Pointer",
 //        [jsonObj setObject:[ncmbObj ncmbClassName] forKey:@"className"];
+                "className": ncmbObj.ncmbClassName,
 //        [jsonObj setObject:[ncmbObj objectId] forKey:@"objectId"];
+                "objectId": ncmbObj.objectId as Any
+            ]
 //        return jsonObj;
+            return jsonObj
 //
 //    } else if ([obj isKindOfClass:[NCMBRelation class]]){
+        case let relation as NCMBRelation:
 //        //objがリレーションだったら
 //        NCMBRelation *relation = obj;
 //        NCMBObject *parentObj = relation.parent;
+            let parentObj = relation.parent
 //        id convertObj = [self convertToJSONDicFromOperation:[parentObj currentOperations]];
+            let convertObj = self.convertToJSONDicFromOperation(parentObj?.currentOperations())
 //        return convertObj;
+            return convertObj
 //
 //    } else if ([obj isKindOfClass:[NCMBACL class]]){
+        case let acl as NCMBACL:
 //        //objがACLだったら
 //        NCMBACL *acl = obj;
 //        if ([[acl dicACL] count] == 0){
+            if acl.dicACL.isEmpty {
 //            return [NSNull null];
+                return NSNull()
 //        } else {
+            } else {
 //            return [acl dicACL];
+                return acl.dicACL
 //        }
+            }
 //    } else if ([obj isKindOfClass:[NSDictionary class]]){
+        case let dic as [String: Any]:
 //        NSMutableDictionary *jsonObj = [NSMutableDictionary dictionary];
+            var jsonObj: [String: Any] = [:]
 //        //objがNSDictionaryだったら再帰呼び出し
 //        for (id Key in [obj keyEnumerator]){
+            for (key, value) in dic {
 //            id convertedObj = [self convertToJSONFromNCMBObject:[obj objectForKey:Key]];
+                let convertedObj = self.convertToJSONFromNCMBObject(value)
 //            [jsonObj setObject:convertedObj forKey:Key];
+                jsonObj[key] = convertedObj
 //        }
+            }
 //        return jsonObj;
+            return jsonObj
 //    } else if ([obj isKindOfClass:[NSArray class]]){
+        case let arr as [Any]:
 //        NSMutableArray *array = [NSMutableArray array];//[NSMutableArray arrayWithObject:obj];
 //        for (int i = 0; i < [obj count]; i++){
 //            //objがNSArrayだったら再帰呼び出し
 //            array[i] = [self convertToJSONFromNCMBObject:obj[i]];
 //        }
 //        return array;
+            return arr.map {self.convertToJSONFromNCMBObject($0)}
 //    } else if ([obj isKindOfClass:[NSSet class]]){
+        case let currentSet as Set<AnyHashable>:
 //        NSMutableSet *currentSet = [NSMutableSet setWithObject:obj];
 //        NSMutableSet *set = [NSMutableSet set];
+            var set: Set<AnyHashable> = []
 //        for (id value in [currentSet objectEnumerator]){
+            for value in currentSet {
 //            //objがNSSetだったら再帰呼び出し
 //            [set addObject:[self convertToJSONFromNCMBObject:value]];
+                set.insert(self.convertToJSONFromNCMBObject(value) as! AnyHashable)
 //        }
+            }
 //        return set;
+            return set
 //
 //    } else if ([obj isKindOfClass:[NCMBQuery class]]){
+        case let query as NCMBQuery:
 //        NCMBQuery *query = (NCMBQuery*)obj;
 //        NSMutableDictionary *jsonQuery = [NSMutableDictionary dictionary];
 //        NSMutableDictionary *subQuery = [NSMutableDictionary dictionary];
+            var subQuery: [String: Any] = [:]
 //        for (NSString *queryKey in [[query.query allKeys] objectEnumerator]){
+            for (queryKey, value) in query.query {
 //            //セットされたサブクエリの内容をすべてJSONに変換
 //            [subQuery setObject:[self convertToJSONFromNCMBObject:[query.query objectForKey:queryKey]]
+                subQuery[queryKey] = self.convertToJSONFromNCMBObject(value)
 //                        forKey:queryKey];
 //        }
+            }
+            var jsonQuery: [String: Any] = [
 //        [jsonQuery setObject:subQuery forKey:@"where"];
+                "where": subQuery,
 //        [jsonQuery setObject:query.ncmbClassName forKey:@"className"];
+                "className": query.ncmbClassName
+            ]
 //        if (query.limit > 0){
+            if query.limit > 0 {
 //            [jsonQuery setObject:[NSNumber numberWithInt:query.limit] forKey:@"limit"];
+                jsonQuery["limit"] = query.limit
 //        }
+            }
 //        if (query.skip > 0){
+            if query.skip > 0 {
 //            [jsonQuery setObject:[NSNumber numberWithInt:query.skip] forKey:@"skip"];
+                jsonQuery["skip"] = query.skip
 //        }
+            }
 //        return jsonQuery;
+            return jsonQuery
 //    }
+        default:
+            break
+        }
 //    //その他の型(文字列、数値、真偽値)はそのまま返却
 //    return obj;
         return obj
@@ -1617,12 +1743,12 @@ public class NCMBQuery {
 // @param operations オブジェクトの操作履歴を保持するNSMutableDictionaryオブジェクト
 // */
 //-(NSMutableDictionary *)convertToJSONDicFromOperation:(NSMutableDictionary*)operations{
-    private func convertToJSONDicFromOperation(_ operations: NCMBOperationSet) -> [String: Any] {
+    private func convertToJSONDicFromOperation(_ operations: NCMBOperationSet?) -> [String: Any] {
 //
 //    NSMutableDictionary *jsonDic = [[NSMutableDictionary alloc]init];
         var jsonDic: [String: Any] = [:]
 //    for (id key in [operations keyEnumerator]) {
-        for (key, operation) in operations {
+        for (key, operation) in operations ?? [:] {
 //        //各操作をREST APIの形式に変換してセットする
 //        [jsonDic setObject:[[operations valueForKey:key] encode] forKey:key];
             jsonDic[key] = operation.encode()
