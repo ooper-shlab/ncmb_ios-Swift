@@ -978,7 +978,7 @@ public class NCMBQuery {
 //}
 //
 //- (void)findObjectsInBackgroundWithBlock:(NCMBArrayResultBlock)block{
-    public func findObjectsInBackground(block: NCMBArrayResultBlock?) {
+    public func findObjectsAsync(block: NCMBArrayResultBlock?) {
 //    NCMBRequest *request = [self createRequestForSearch:_query countEnableFlag:NO getFirst:NO];
         let request = self.createRequestForSearch(query, isCountEnabled: false, shouldGetFirst: false)
 //    _session = [[NCMBURLSession alloc] initWithRequestAsync:request];
@@ -1115,7 +1115,7 @@ public class NCMBQuery {
 //
 //
 //- (void)getFirstObjectInBackgroundWithBlock:(NCMBAnyObjectResultBlock)block{
-    public func getFirstObjectInBackground(block: @escaping NCMBObjectResultBlock) {
+    public func getFirstObjectAsync(block: @escaping NCMBObjectResultBlock) {
 //    NCMBRequest *request = [self createRequestForSearch:_query countEnableFlag:NO getFirst:YES];
         let request = self.createRequestForSearch(query, isCountEnabled: false, shouldGetFirst: true)
 //    _session = [[NCMBURLSession alloc] initWithRequestAsync:request];
@@ -1202,7 +1202,7 @@ public class NCMBQuery {
     }
 //
 //- (void)countObjectsInBackgroundWithBlock:(NCMBIntegerResultBlock)block{
-    public func countObjectsInBackground(block: @escaping NCMBIntegerResultBlock) {
+    public func countObjectsAsync(block: @escaping NCMBIntegerResultBlock) {
 //    NCMBRequest *request = [self createRequestForSearch:_query countEnableFlag:YES getFirst:NO];
         let request = self.createRequestForSearch(query, isCountEnabled: true, shouldGetFirst: false)
 //    _session = [[NCMBURLSession alloc] initWithRequestSync:request];
@@ -1287,7 +1287,7 @@ public class NCMBQuery {
     }
 //
 //- (void)getObjectInBackgroundWithId:(NSString *)objectId block:(NCMBObjectResultBlock)block{
-    public func getObjectInBackground(id objectId: String, block: @escaping NCMBObjectResultBlock) {
+    public func getObjectAsync(id objectId: String, block: @escaping NCMBObjectResultBlock) {
 //    NSMutableDictionary *queryDic = [NSMutableDictionary dictionaryWithDictionary:@{@"objectId":objectId}];
         let queryDic: [String: Any] = ["objectId": objectId]
 //

@@ -27,3 +27,8 @@ This repository is being public, as the original SDK is open-sourced.
 ### Build requirement
 
 Xcode 10.2.1, Swift 5
+
+### Runtime requirement
+
+iOS 8.0 or later
+

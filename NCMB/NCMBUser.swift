@@ -731,9 +731,9 @@ public class NCMBUser: NCMBObject {
 // @param block サインアップ後に実行されるblock
 // */
 //- (void)signUpInBackgroundWithBlock:(NCMBErrorResultBlock)block{
-    public func signUpInBackground(block: @escaping NCMBErrorResultBlock) {
+    public func signUpAsync(block: @escaping NCMBErrorResultBlock) {
 //    [self saveInBackgroundWithBlock:block];
-        self.saveInBackground(block: block)
+        self.saveAsync(block: block)
 //}
     }
 //
@@ -743,9 +743,9 @@ public class NCMBUser: NCMBObject {
 // @param selector 呼び出すセレクタ
 // */
 //- (void)signUpInBackgroundWithTarget:(id)target selector:(SEL)selector{
-    public func signUpInBackground(target: AnyObject, selector: Selector) {
+    public func signUpAsync(target: AnyObject, selector: Selector) {
 //    [self saveInBackgroundWithTarget:target selector:selector];
-        self.saveInBackground(target: target, selector: selector)
+        self.saveAsync(target: target, selector: selector)
 //}
     }
 //
@@ -771,7 +771,7 @@ public class NCMBUser: NCMBObject {
 //    [self setObject:userAuthData forKey:@"authData"];
         self.setObject(userAuthData, forKey: "authData")
 //    [self signUpInBackgroundWithBlock:^(NSError *error) {
-        self.signUpInBackground {error in
+        self.signUpAsync {error in
 //        [self executeUserCallback:block error:error];
             block?(error)
 //    }];
@@ -848,7 +848,7 @@ public class NCMBUser: NCMBObject {
 //
 //
 //- (void)signUpFromAnonymousInBackgroundWithBlock:(NSString *)userName
-    public func signUpFromAnonymousInBackground(userName: String,
+    public func signUpFromAnonymousAsync(userName: String,
                                                 password: String,
 //                                        password:(NSString *)password
 //                                           block:(NCMBErrorResultBlock)block{
@@ -866,7 +866,7 @@ public class NCMBUser: NCMBObject {
         let deleteUser = self.setTheData(for: signUpUser, userName: userName, password: password)
 //        //新規ユーザー登録
 //        [signUpUser signUpInBackgroundWithBlock:^(NSError *error) {
-        signUpUser.signUpInBackground {error in
+        signUpUser.signUpAsync {error in
 //            if(error){
             if let error = error {
 //                [self executeUserCallback:block error:error];
@@ -877,7 +877,7 @@ public class NCMBUser: NCMBObject {
 //                currentUser = deleteUser;
                 NCMBUser._currentUser = deleteUser
 //                [deleteUser deleteInBackgroundWithBlock:^(NSError *error) {
-                deleteUser.deleteInBackground {error in
+                deleteUser.deleteAsync {error in
 //                    currentUser = signUpUser;
                     NCMBUser._currentUser = signUpUser
 //                    [self executeUserCallback:block error:error];
@@ -900,14 +900,14 @@ public class NCMBUser: NCMBObject {
 // @param selector 呼び出すセレクタ
 // */
 //- (void)signUpFromAnonymousInBackgroundWithTarget:(NSString *)userName password:(NSString *)password target:(id)target selector:(SEL)selector{
-    public func signUpFromAnonymousInBackground(userName: String, password: String, target: AnyObject, selector: Selector) {
+    public func signUpFromAnonymousAsync(userName: String, password: String, target: AnyObject, selector: Selector) {
 //    NSMethodSignature* signature = [target methodSignatureForSelector: selector ];
 //    NSInvocation* invocation = [ NSInvocation invocationWithMethodSignature: signature ];
 //    [ invocation setTarget:target];
 //    [ invocation setSelector: selector ];
 //
 //    [self signUpFromAnonymousInBackgroundWithBlock:userName password:password block:^(NSError *error) {
-        self.signUpFromAnonymousInBackground(userName: userName, password: password) {error in
+        self.signUpFromAnonymousAsync(userName: userName, password: password) {error in
 //        [invocation setArgument:&error atIndex: 2 ];
 //        [invocation invoke ];
             _ = target.perform(selector, with: error)
@@ -985,7 +985,7 @@ public class NCMBUser: NCMBObject {
 // @param selector 呼び出すセレクタ
 // */
 //+ (void)requestAuthenticationMailInBackground:(NSString *)email
-    public static func requestAuthenticationMailInBackground(_ email: String,
+    public static func requestAuthenticationMailAsync(_ email: String,
 //                                       target:(id)target
         target: AnyObject,
 //                                     selector:(SEL)selector{
@@ -1001,7 +1001,7 @@ public class NCMBUser: NCMBObject {
 // @param block 登録メールの要求後に実行されるblock
 // */
 //+ (void)requestAuthenticationMailInBackground:(NSString *)email
-    public static func requestAuthenticationMailInBackground(_ email: String,
+    public static func requestAuthenticationMailAsync(_ email: String,
 //                                        block:(NCMBErrorResultBlock)block{
         block: NCMBErrorResultBlock?) {
 //    [NCMBUser requestMailFromNCMB:URL_AUTHENTICATION_MAIL mail:email block:block];
@@ -1043,11 +1043,11 @@ public class NCMBUser: NCMBObject {
 //    if ([path isEqualToString:URL_PASSWOR_RESET]){
         if path == URL_PASSWORD_RESET {
 //        [NCMBUser requestPasswordResetForEmailInBackground:email block:block];
-            NCMBUser.requestPasswordResetInBackground(forEmail: email, block: block)
+            NCMBUser.requestPasswordResetAsync(forEmail: email, block: block)
 //    } else if ([path isEqualToString:URL_AUTHENTICATION_MAIL]){
         } else if path == URL_AUTHENTICATION_MAIL {
 //        [NCMBUser requestAuthenticationMailInBackground:email block:block];
-            NCMBUser.requestAuthenticationMailInBackground(email, block: block)
+            NCMBUser.requestAuthenticationMailAsync(email, block: block)
 //    }
         }
 //}
@@ -1179,7 +1179,7 @@ public class NCMBUser: NCMBObject {
 // @param selector 呼び出すセレクタ
 // */
 //+ (void)logInWithUsernameInBackground:(NSString *)username
-    public static func logInInBackground(username: String,
+    public static func logInAsync(username: String,
 //                             password:(NSString *)password
         password: String,
 //                               target:(id)target
@@ -1187,7 +1187,7 @@ public class NCMBUser: NCMBObject {
 //                             selector:(SEL)selector{
         selector: Selector) {
 //    [NCMBUser ncmbLogInInBackground:username mailAddress:nil password:password target:target selector:selector];
-        NCMBUser.ncmbLogInInBackground(username, mailAddress: nil, password: password, target: target, selector: selector)
+        NCMBUser.ncmbLogInAsync(username, mailAddress: nil, password: password, target: target, selector: selector)
 //}
     }
 //
@@ -1198,13 +1198,13 @@ public class NCMBUser: NCMBObject {
 // @param block ログイン後に実行されるblock
 // */
 //+ (void)logInWithUsernameInBackground:(NSString *)username
-    public static func logInInBackground(username: String,
+    public static func logInAsync(username: String,
 //                             password:(NSString *)password
         password: String,
 //                                block:(NCMBUserResultBlock)block{
         block: NCMBUserResultBlock?) {
 //    [NCMBUser ncmbLogInInBackground:username mailAddress:nil password:password block:block];
-        NCMBUser.ncmbLogInInBackground(username, mailAddress: nil, password: password, block: block)
+        NCMBUser.ncmbLogInAsync(username, mailAddress: nil, password: password, block: block)
 //}
     }
 //
@@ -1234,7 +1234,7 @@ public class NCMBUser: NCMBObject {
 // @param selector 呼び出すセレクタ
 // */
 //+ (void)logInWithMailAddressInBackground:(NSString *)email
-    public static func logInInBackground(mailAddress email: String,
+    public static func logInAsync(mailAddress email: String,
 //                                password:(NSString *)password
         password: String,
 //                                  target:(id)target
@@ -1242,7 +1242,7 @@ public class NCMBUser: NCMBObject {
 //                                selector:(SEL)selector{
         selector: Selector) {
 //    [NCMBUser ncmbLogInInBackground:nil mailAddress:email password:password target:target selector:selector];
-        NCMBUser.ncmbLogInInBackground(nil, mailAddress: email, password: password, target: target, selector: selector)
+        NCMBUser.ncmbLogInAsync(nil, mailAddress: email, password: password, target: target, selector: selector)
 //}
     }
 //
@@ -1254,13 +1254,13 @@ public class NCMBUser: NCMBObject {
 // @param block ログイン後に実行されるblock
 // */
 //+ (void)logInWithMailAddressInBackground:(NSString *)email
-    public static func logInInBackground(mailAddress email: String,
+    public static func logInAsync(mailAddress email: String,
 //                                password:(NSString *)password
         password: String,
 //                                   block:(NCMBUserResultBlock)block{
         block: @escaping NCMBUserResultBlock) {
 //    [NCMBUser ncmbLogInInBackground:nil mailAddress:email password:password block:block];
-        NCMBUser.ncmbLogInInBackground(nil, mailAddress: email, password: password, block: block)
+        NCMBUser.ncmbLogInAsync(nil, mailAddress: email, password: password, block: block)
 //}
     }
 //
@@ -1276,7 +1276,7 @@ public class NCMBUser: NCMBObject {
 // @param selector 呼び出すセレクタ
 // */
 //+ (void)ncmbLogInInBackground:(NSString *)username
-    private static func ncmbLogInInBackground(_ username: String?,
+    private static func ncmbLogInAsync(_ username: String?,
 //                  mailAddress:(NSString *)email
         mailAddress email: String?,
 //                     password:(NSString *)password
@@ -1292,7 +1292,7 @@ public class NCMBUser: NCMBObject {
 //    [ invocation setSelector: selector ];
 //
 //    [NCMBUser ncmbLogInInBackground:username mailAddress:email password:password block:^(NCMBUser *user, NSError *error) {
-        NCMBUser.ncmbLogInInBackground(username, mailAddress: email, password: password) {
+        NCMBUser.ncmbLogInAsync(username, mailAddress: email, password: password) {
             result in
 //        [ invocation setArgument:&user atIndex: 2 ];
 //        [ invocation setArgument:&error atIndex: 3 ];
@@ -1418,7 +1418,7 @@ public class NCMBUser: NCMBObject {
 // @param block ログイン後に実行されるblock
 // */
 //+ (void)ncmbLogInInBackground:(NSString *)username
-    private static func ncmbLogInInBackground(_ username: String?,
+    private static func ncmbLogInAsync(_ username: String?,
 //                  mailAddress:(NSString *)email
         mailAddress email: String?,
 //                     password:(NSString *)password
@@ -1515,7 +1515,7 @@ public class NCMBUser: NCMBObject {
 // @param block ログアウトのリクエストをした後に実行されるblock
 // */
 //+ (void)logOutInBackgroundWithBlock:(NCMBErrorResultBlock)block{
-    public static func logOutInBackground(block: NCMBErrorResultBlock?) {
+    public static func logOutAsync(block: NCMBErrorResultBlock?) {
 //    //リクエストを作成
 //    NCMBRequest *request = [[NCMBRequest alloc] initWithURLString:URL_LOGOUT
         let request = NCMBRequest(urlString: NCMBUser.URL_LOGOUT,
@@ -1592,7 +1592,7 @@ public class NCMBUser: NCMBObject {
 // @param selector 呼び出すセレクタ
 // */
 //+ (void)requestPasswordResetForEmailInBackground:(NSString *)email
-    public static func requestPasswordResetInBackground(forEmail email: String,
+    public static func requestPasswordResetAsync(forEmail email: String,
 //                                          target:(id)target
         target: AnyObject,
 //                                        selector:(SEL)selector{
@@ -1608,7 +1608,7 @@ public class NCMBUser: NCMBObject {
 // @param block リセット要求後に実行されるblock
 // */
 //+ (void)requestPasswordResetForEmailInBackground:(NSString *)email
-    public static func requestPasswordResetInBackground(forEmail email: String,
+    public static func requestPasswordResetAsync(forEmail email: String,
 //                                           block:(NCMBErrorResultBlock)block{
         block: NCMBErrorResultBlock?) {
 //    [NCMBUser requestMailFromNCMB:URL_PASSWOR_RESET mail:email block:block];
@@ -1893,7 +1893,7 @@ public class NCMBUser: NCMBObject {
 //    [self setObject:userAuthData forKey:@"authData"];
         self.setObject(userAuthData, forKey: "authData")
 //    [self saveInBackgroundWithBlock:^(NSError *error) {
-        self.saveInBackground {error in
+        self.saveAsync {error in
 //        if (!error){
             if error == nil {
 //            // ローカルデータから既にあるauthDataを取得して認証情報をマージ
@@ -2017,7 +2017,7 @@ public class NCMBUser: NCMBObject {
 //            [self setObject:authData forKey:@"authData"];
                 self.setObject(authData, forKey: "authData")
 //            [self saveInBackgroundWithBlock:^(NSError *error) {
-                self.saveInBackground {error in
+                self.saveAsync {error in
 //                if (!error){
                     if error == nil {
 //                    // ローカルデータから既にあるauthDataを取得して引数で指定した認証情報を削除してマージ

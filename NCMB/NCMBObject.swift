@@ -1746,13 +1746,13 @@ open class NCMBObject: NSObject {
 // @param block 通信後に実行されるblock。引数にNSError *errorを持つ。
 // */
 //- (void)refreshInBackgroundWithBlock:(NCMBErrorResultBlock)block{
-    public func refreshInBackground(block: NCMBErrorResultBlock?) {
+    public func refreshAsync(block: NCMBErrorResultBlock?) {
 //    if (_objectId){
         if let objectId = objectId {
 //        NSString *url = [self returnBaseUrl:_ncmbClassName objectId:_objectId];
             let url = self.returnBaseUrl(ncmbClassName, objectId: objectId)
 //        [self fetchInBackgroundWithBlock:url block:block isRefresh:YES];
-            self.fetchInBackground(url, block: block, isRefresh: true)
+            self.fetchAsync(url, block: block, isRefresh: true)
 //    } else {
         } else {
 //        if (block){
@@ -1779,14 +1779,14 @@ open class NCMBObject: NSObject {
 // @param selector 実行するセレクタ
 // */
 //- (void)refreshInBackgroundWithTarget:(id)target selector:(SEL)selector{
-    public func refreshInBackground(target: AnyObject, selector: Selector) {
+    public func refreshAsync(target: AnyObject, selector: Selector) {
 //    NSMethodSignature* signature = [target methodSignatureForSelector:selector];
 //    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
 //    [invocation setTarget:target];
 //    [invocation setSelector:selector];
 //
 //    [self refreshInBackgroundWithBlock:^(NSError *error) {
-        self.refreshInBackground {error in
+        self.refreshAsync {error in
 //        [invocation retainArguments];
 //        [invocation setArgument:&error atIndex: 2 ];
 //        [invocation invoke];
@@ -1891,7 +1891,7 @@ open class NCMBObject: NSObject {
 // @param userBlock 通信後に実行されるblock。引数にNSError *errorを持つ。
 // */
 //- (void)fetchInBackgroundWithBlock:(NSString *)url
-    internal func fetchInBackground(_ url: String,
+    internal func fetchAsync(_ url: String,
 //                             block:(NCMBErrorResultBlock)userBlock
         block userBlock: NCMBErrorResultBlock?,
 //                         isRefresh:(BOOL)isRefresh
@@ -1937,13 +1937,13 @@ open class NCMBObject: NSObject {
 // @param block 通信後に実行されるblock。引数にNSError *errorを持つ。
 // */
 //- (void)fetchInBackgroundWithBlock:(NCMBErrorResultBlock)block{
-    public func fetchInBackground(block: NCMBErrorResultBlock?) {
+    public func fetchAsync(block: NCMBErrorResultBlock?) {
 //    if (_objectId){
         if let objectId = objectId {
 //        NSString *url = [self returnBaseUrl:_ncmbClassName objectId:_objectId];
             let urlString = self.returnBaseUrl(ncmbClassName, objectId: objectId)
 //        [self fetchInBackgroundWithBlock:url block:block isRefresh:NO];
-            self.fetchInBackground(urlString, block: block, isRefresh: false)
+            self.fetchAsync(urlString, block: block, isRefresh: false)
 //    } else {
         } else {
 //        if (block){
@@ -1972,7 +1972,7 @@ open class NCMBObject: NSObject {
 // @param selector 実行するセレクタ
 // */
 //- (void)fetchInBackgroundWithTarget:(id)target selector:(SEL)selector{
-    public func fetchInBackground(target: AnyObject, selector: Selector) {
+    public func fetchAsync(target: AnyObject, selector: Selector) {
 //    if (_objectId){
         if objectId != nil {
 //        NSMethodSignature* signature = [target methodSignatureForSelector:selector];
@@ -1981,7 +1981,7 @@ open class NCMBObject: NSObject {
 //        [invocation setSelector:selector];
 //
 //        [self fetchInBackgroundWithBlock:^(NSError *error) {
-            self.fetchInBackground {error in
+            self.fetchAsync {error in
 //            [invocation retainArguments];
 //            [invocation setArgument:&error atIndex: 2];
 //            [invocation invoke];
@@ -2143,7 +2143,7 @@ open class NCMBObject: NSObject {
                 let setOperation = value as? NCMBSetOperation,
                 let valueObj = setOperation.value as? NCMBObject
             {
-                valueObj.saveInBackground {error in
+                valueObj.saveAsync {error in
                     if let error = error {
                         task.terminate(error: error)
                     } else {
@@ -2257,7 +2257,7 @@ open class NCMBObject: NSObject {
 // */
     ///Need to REWRITE this method. Using sync methods internally
 //- (void)saveInBackgroundWithBlock:(NSString *)url block:(NCMBErrorResultBlock)userBlock{
-    internal func __saveInBackground(_ url: String, block userBlock: NCMBErrorResultBlock?) {
+    internal func __saveAsync(_ url: String, block userBlock: NCMBErrorResultBlock?) {
         print(url)
 //    // ポインタ先オブジェクトは事前に保存する
 //    NSError *e = nil;
@@ -2321,7 +2321,7 @@ open class NCMBObject: NSObject {
         }
 //}
     }
-    internal func saveInBackground(_ url: String, block userBlock: NCMBErrorResultBlock?) {
+    internal func saveAsync(_ url: String, block userBlock: NCMBErrorResultBlock?) {
         print(url)
         // ポインタ先オブジェクトは事前に保存する
         let operation = self.beforeConnection()
@@ -2365,11 +2365,11 @@ open class NCMBObject: NSObject {
 // @param userBlock 通信後に実行されるblock。引数にNSError *errorを持つ。
 // */
 //- (void)saveInBackgroundWithBlock:(NCMBErrorResultBlock)userBlock{
-    public func saveInBackground(block userBlock: @escaping NCMBErrorResultBlock) {
+    public func saveAsync(block userBlock: NCMBErrorResultBlock?) {
 //    NSString *url = [self returnBaseUrl:_ncmbClassName objectId:_objectId];
         let url = self.returnBaseUrl(ncmbClassName, objectId: objectId)
 //    [self saveInBackgroundWithBlock:url block:userBlock];
-        self.saveInBackground(url, block: userBlock)
+        self.saveAsync(url, block: userBlock)
 //}
     }
 //
@@ -2379,7 +2379,7 @@ open class NCMBObject: NSObject {
 // @param selector 実行するセレクタ
 // */
 //- (void)saveInBackgroundWithTarget:(id)target selector:(SEL)selector{
-    public func saveInBackground(target: AnyObject, selector: Selector) {
+    public func saveAsync(target: AnyObject, selector: Selector) {
 //    if (!target || !selector){
 //        [NSException raise:@"NCMBInvalidValueException" format:@"target and selector must not be nil."];
 //    }
@@ -2388,7 +2388,7 @@ open class NCMBObject: NSObject {
 //    [invocation setTarget:target];
 //    [invocation setSelector:selector];
 //    [self saveInBackgroundWithBlock:^(NSError *error) {
-        self.saveInBackground {error in
+        self.saveAsync {error in
 //        [invocation retainArguments];
 //        [invocation setArgument:&error atIndex:2];
 //        [invocation invoke];
@@ -2507,7 +2507,7 @@ open class NCMBObject: NSObject {
 //    if ([reachability isReachableToTarget]){
         if reachability.isReachableToTarget() {
 //        [self saveInBackgroundWithBlock:^(NSError *error) {
-            self.saveInBackground {error in
+            self.saveAsync {error in
 //            if (error){
 //                callback(error);
 //            } else {
@@ -2693,7 +2693,7 @@ open class NCMBObject: NSObject {
 // @param userBlock 削除後に実行されるblock
 // */
 //- (void)deleteInBackgroundWithBlock:(NSString *)url block:(NCMBErrorResultBlock)userBlock{
-    internal func deleteInBackground(_ url: String, block userBlock: NCMBErrorResultBlock?) {
+    internal func deleteAsync(_ url: String, block userBlock: NCMBErrorResultBlock?) {
 //    //リクエストを作成
 //    NCMBRequest *request = [[NCMBRequest alloc]initWithURLString:url method:@"DELETE" header:nil body:nil];
         let request = NCMBRequest(urlString: url,
@@ -2728,13 +2728,13 @@ open class NCMBObject: NSObject {
 // @param userBlock 通信後に実行されるblock。引数にNSError *errorを持つ。
 // */
 //- (void)deleteInBackgroundWithBlock:(NCMBErrorResultBlock)userBlock{
-    public func deleteInBackground(block userBlock: NCMBErrorResultBlock?) {
+    public func deleteAsync(block userBlock: NCMBErrorResultBlock?) {
 //    if (_objectId){
         if let objectId = objectId {
 //        NSString *url = [self returnBaseUrl:_ncmbClassName objectId:_objectId];
             let url = self.returnBaseUrl(ncmbClassName, objectId: objectId)
 //        [self deleteInBackgroundWithBlock:url block:userBlock];
-            self.deleteInBackground(url, block: userBlock)
+            self.deleteAsync(url, block: userBlock)
 //    } else {
         } else {
 //        if (userBlock){
@@ -2763,7 +2763,7 @@ open class NCMBObject: NSObject {
 // @param selector 実行するセレクタ
 // */
 //- (void)deleteInBackgroundWithTarget:(id)target
-    public func deleteInBackground(_ target: NSObject, selector: Selector) {
+    public func deleteAsync(_ target: NSObject, selector: Selector) {
 //                            selector:(SEL)selector{
 //
 //    NSMethodSignature* signature = [target methodSignatureForSelector:selector];
@@ -2772,7 +2772,7 @@ open class NCMBObject: NSObject {
 //    [invocation setSelector:selector];
 //
 //    [self deleteInBackgroundWithBlock:^(NSError *error) {
-        self.deleteInBackground {error in
+        self.deleteAsync {error in
 //        [invocation retainArguments];
 //        [invocation setArgument:&error atIndex:2];
 //        [invocation invoke];
@@ -2805,7 +2805,7 @@ open class NCMBObject: NSObject {
 //        if ([reachability isReachableToTarget]){
             if reachability.isReachableToTarget() {
 //            [self deleteInBackgroundWithBlock:^(NSError *error) {
-                self.deleteInBackground {error in
+                self.deleteAsync {error in
 //                if (error){
 //                    callback(error);
 //                } else {

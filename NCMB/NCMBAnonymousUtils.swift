@@ -154,7 +154,7 @@ public class NCMBAnonymousUtils {
 //    NCMBUser *user = [NCMBAnonymousUtils createAnonymousUser];
         let user = NCMBAnonymousUtils.createAnonymousUser()
 //    [user signUpInBackgroundWithBlock:^(NSError *error) {
-        user.signUpInBackground {error in
+        user.signUpAsync {error in
 //        if (block) {
             if let block = block {
 //            block(user,error);

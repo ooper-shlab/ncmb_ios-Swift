@@ -149,7 +149,7 @@ public class NCMBGeoPoint: NSObject, CLLocationManagerDelegate {
 // @param geoPointHandler geoPointとerrorのHandler
 // */
 //+ (void)geoPointForCurrentLocationInBackground:(NCMBGeoPointHandler)geoPointHandler{
-    public static func geoPointForCurrentLocationInBackground(_ geoPointHandler: @escaping NCMBGeoPointHandler) {
+    public static func geoPointForCurrentLocationAsync(_ geoPointHandler: @escaping NCMBGeoPointHandler) {
 //
 //    currentPoint = [NCMBGeoPoint geoPoint];
         currentPoint = NCMBGeoPoint()

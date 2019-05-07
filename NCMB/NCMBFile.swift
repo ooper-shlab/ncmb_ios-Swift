@@ -245,13 +245,13 @@ public class NCMBFile: NCMBObject {
 //    [[NSException exceptionWithName:NSInternalInconsistencyException reason:@"UnsupportedOperation." userInfo:nil] raise];
 //}
 //-(void)refreshInBackgroundWithBlock:(NCMBObjectResultBlock)block {
-    public override func refreshInBackground(block: NCMBErrorResultBlock?) {
+    public override func refreshAsync(block: NCMBErrorResultBlock?) {
 //    [[NSException exceptionWithName:NSInternalInconsistencyException reason:@"UnsupportedOperation." userInfo:nil] raise];
         fatalError("UnsupportedOperation.")
 //}
     }
 //-(void)refreshInBackgroundWithTarget:(id)target selector:(SEL)selector {
-    public override func refreshInBackground(target: AnyObject, selector: Selector) {
+    public override func refreshAsync(target: AnyObject, selector: Selector) {
 //    [[NSException exceptionWithName:NSInternalInconsistencyException reason:@"UnsupportedOperation." userInfo:nil] raise];
         fatalError("UnsupportedOperation.")
 //}
@@ -260,13 +260,13 @@ public class NCMBFile: NCMBObject {
 //    [[NSException exceptionWithName:NSInternalInconsistencyException reason:@"UnsupportedOperation." userInfo:nil] raise];
 //}
 //-(void)fetchInBackgroundWithBlock:(NCMBErrorResultBlock)block {
-    public override func fetchInBackground(block: NCMBErrorResultBlock?) {
+    public override func fetchAsync(block: NCMBErrorResultBlock?) {
 //    [[NSException exceptionWithName:NSInternalInconsistencyException reason:@"UnsupportedOperation." userInfo:nil] raise];
         fatalError("UnsupportedOperation.")
 //}
     }
 //-(void)fetchInBackgroundWithTarget:(id)target selector:(SEL)selector {
-    public override func fetchInBackground(target: AnyObject, selector: Selector) {
+    public override func fetchAsync(target: AnyObject, selector: Selector) {
 //    [[NSException exceptionWithName:NSInternalInconsistencyException reason:@"UnsupportedOperation." userInfo:nil] raise];
         fatalError("UnsupportedOperation.")
 //}
@@ -473,7 +473,7 @@ public class NCMBFile: NCMBObject {
 // @param progressBlock 保存進度により定期的に実行されるblock。blockは次の引数のシグネチャを持つ必要がある（int percentDone）
 // */
 //- (void)saveInBackgroundWithBlock:(NCMBErrorResultBlock)block
-    public func saveInBackground(block: NCMBErrorResultBlock?,
+    public func saveAsync(block: NCMBErrorResultBlock?,
 //                    progressBlock:(NCMBProgressBlock)progressBlock{
         progressBlock: NCMBProgressBlock?) {
 //
@@ -581,13 +581,13 @@ public class NCMBFile: NCMBObject {
 // resultには取得したデータが渡される。errorにはエラーがあればエラーのポインタが、なければnilが渡される。
 // */
 //- (void)getDataInBackgroundWithTarget:(id)target selector:(SEL)selector{
-    public func getDataInBackground(target: AnyObject, selector: Selector) {
+    public func getDataAsync(target: AnyObject, selector: Selector) {
 //    NSMethodSignature* signature = [target methodSignatureForSelector:selector];
 //    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
 //    [invocation setTarget:target];
 //    [invocation setSelector:selector];
 //    [self getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
-        self.getDataInBackground {result in
+        self.getDataAsync{result in
 //        [invocation setArgument:&data atIndex:2];
 //        [invocation setArgument:&error atIndex:3];
 //        [invocation invoke];
@@ -608,9 +608,9 @@ public class NCMBFile: NCMBObject {
 // resultには取得したデータが渡される。errorにはエラーがあればエラーのポインタが、なければnilが渡される。
 // */
 //- (void)getDataInBackgroundWithBlock:(NCMBDataResultBlock)block{
-    public func getDataInBackground(block: @escaping NCMBDataResultBlock) {
+    public func getDataAsync(block: @escaping NCMBDataResultBlock) {
 //    [self getDataInBackgroundWithBlock:block progressBlock:nil];
-        self.getDataInBackground(block: block, progressBlock: nil)
+        self.getDataAsync(block: block, progressBlock: nil)
 //}
     }
 //
@@ -620,7 +620,7 @@ public class NCMBFile: NCMBObject {
 // @param progressBlock 取得進度により定期的に実行されるblock。progressBlockは次の引数のシグネチャを持つ必要がある（int percentDone）
 // */
 //- (void)getDataInBackgroundWithBlock:(NCMBDataResultBlock)resultBlock
-    public func getDataInBackground(block resultBlock: NCMBDataResultBlock?,
+    public func getDataAsync(block resultBlock: NCMBDataResultBlock?,
                                     progressBlock: NCMBProgressBlock?) {
 //                       progressBlock:(NCMBProgressBlock)progressBlock{
 //
@@ -941,9 +941,9 @@ public class NCMBFile: NCMBObject {
 // @param userBlock 通信後に実行されるblock。引数にNSError *errorを持つ。
 // */
 //- (void)saveInBackgroundWithBlock:(NCMBErrorResultBlock)userBlock{
-    public override func saveInBackground(block userBlock: @escaping NCMBErrorResultBlock) {
+    public override func saveAsync(block userBlock: NCMBErrorResultBlock?) {
 //    [self saveInBackgroundWithBlock:userBlock progressBlock:nil];
-        self.saveInBackground(block: userBlock, progressBlock: nil)
+        self.saveAsync(block: userBlock, progressBlock: nil)
 //}
     }
 //
@@ -975,13 +975,13 @@ public class NCMBFile: NCMBObject {
 // @param userBlock 通信後に実行されるblock。引数にBOOL succeeded, NSError *errorを持つ。
 // */
 //- (void)deleteInBackgroundWithBlock:(NCMBErrorResultBlock)userBlock{
-    public override func deleteInBackground(block userBlock: NCMBErrorResultBlock?) {
+    public override func deleteAsync(block userBlock: NCMBErrorResultBlock?) {
 //    if (_name){
         if let name = self.name {
 //        NSString *url = [NSString stringWithFormat:@"%@/%@",URL_FILE,self.name];
             let url = "\(URL_FILE)/\(name)"
 //        [self deleteInBackgroundWithBlock:url block:userBlock];
-            self.deleteInBackground(url, block: userBlock)
+            self.deleteAsync(url, block: userBlock)
 //    } else {
         } else {
 //        if (userBlock){
