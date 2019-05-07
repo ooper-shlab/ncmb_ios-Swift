@@ -163,65 +163,110 @@ public class NCMBRelation: NSObject {
 //
 ////リレーションの追加
 //- (void)addObject:(NCMBObject *)object{
+    public func add(_ object: NCMBObject) {
 //    [self addDuplicationCheck:object];
+        self.addDuplicationCheck(object)
 //    NSMutableSet * addObject = [NSMutableSet set];
 //    [addObject addObject:object];
+        let addObject: Set<NCMBObject> = [object]
 //    NCMBRelationOperation *operation = [[NCMBRelationOperation alloc]init:addObject newRelationsToRemove:nil];
+        let operation = NCMBRelationOperation(addObject, newRelationsToRemove: nil)
 //    self.targetClass = operation.tagetClass;
+        self.targetClass = operation.tagetClass
 //    [self.parent performOperation:self.key byOperation:operation];
+        self.parent?.performOperation(self.key!, byOperation: operation)
 //}
+    }
 //
 //
 ////リレーションの削除
 //- (void)removeObject:(NCMBObject *)object{
+    public func remove(_ object: NCMBObject) {
 //    [self removeDuplicationCheck:object];
+        self.removeDuplicationCheck(object)
 //    NSMutableSet *removeObject = [NSMutableSet set];
 //    [removeObject addObject:object];
+        let removeObject: Set<NCMBObject> = [object]
 //    NCMBRelationOperation *operation = [[NCMBRelationOperation alloc]init:nil newRelationsToRemove:removeObject];
+        let operation = NCMBRelationOperation(nil, newRelationsToRemove: removeObject)
 //    self.targetClass = operation.tagetClass;
+        self.targetClass = operation.tagetClass
 //    [self.parent performOperation:self.key byOperation:operation];
+        self.parent?.performOperation(self.key!, byOperation: operation)
 //}
+    }
 //
 ////前回Addしたオブジェクトと重複しなければエラー
 //-(void)addDuplicationCheck:(NCMBObject *)object{
+    private func addDuplicationCheck(_ object: NCMBObject) {
 //    id value = [[self.parent currentOperations] objectForKey:self.key];
+        if let relationOperation = self.parent?.currentOperations()?[self.key!] as? NCMBRelationOperation {
 //    if(value && [value isKindOfClass:[NCMBRelationOperation class]]){
 //        NCMBRelationOperation *relationOperation = (NCMBRelationOperation *)value;
 //        if(relationOperation.relationToRemove.count > 0){
+            if !relationOperation.relationToRemove.isEmpty {
 //            BOOL deplication = false;
+                var hasDuplicate = false
 //            for (id objectId in relationOperation.relationToRemove){
+                for objectId in relationOperation.relationToRemove {
 //                if(objectId == object.objectId){
+                    if objectId == object.objectId {
 //                    deplication = true;
+                        hasDuplicate = true
 //                }
+                    }
 //            }
+                }
 //            if(!deplication){
+                if !hasDuplicate {
 //                    [[NSException exceptionWithName:NSInternalInconsistencyException reason:@"Add objects in a Remove Must be the same. Call SaveAsync() to send the data." userInfo:nil] raise];
+                    fatalError("Add objects in a Remove Must be the same. Call SaveAsync() to send the data.")
 //            }
+                }
 //        }
+            }
 //    }
+        }
 //}
+    }
 //
 ////前回Removeしたオブジェクトと重複しなければエラー
 //-(void)removeDuplicationCheck:(NCMBObject *)object{
+    private func removeDuplicationCheck(_ object: NCMBObject) {
 //    id value = [[self.parent currentOperations] objectForKey:self.key];
 //    if(value && [value isKindOfClass:[NCMBRelationOperation class]]){
+        if let relationOperation = self.parent?.currentOperations()?[self.key!] as? NCMBRelationOperation {
 //        NCMBRelationOperation *relationOperation = (NCMBRelationOperation *)value;
 //        if(relationOperation.relationToAdd.count > 0){
+            if !relationOperation.relationToAdd.isEmpty {
 //            BOOL deplication = false;
+                var hasDuplicate = false
 //            for (id objectId in relationOperation.relationToAdd){
+                for objectId in relationOperation.relationToAdd {
 //                if(objectId == object.objectId){
+                    if objectId == object.objectId {
 //                    deplication = true;
+                        hasDuplicate = true
 //                }
+                    }
 //            }
+                }
 //            if(!deplication){
+                if !hasDuplicate {
 //                [[NSException exceptionWithName:NSInternalInconsistencyException reason:@"Remove objects in a Add Must be the same. Call SaveAsync() to send the data." userInfo:nil] raise];
+                    fatalError("Remove objects in a Add Must be the same. Call SaveAsync() to send the data.")
 //            }
+                }
 //
 //        }
+            }
 //    }
+        }
 //}
+    }
 //
 ////get時の判定
+    //NOT used, NO header...
 //-(void)ensureParentAndKey:(NCMBObject *)someParent key:(NSString *)someKey{
 //    if(self.parent == nil){
 //        self.parent = someParent;
@@ -237,6 +282,7 @@ public class NCMBRelation: NSObject {
 //    }
 //}
 //
+    //NOT used, NO header...
 //-(NSMutableDictionary *)encodeToJson{
 //    NSMutableDictionary *json = [[NSMutableDictionary alloc]init];
 //    [json setObject:@"__type" forKey:@"Relation"];
