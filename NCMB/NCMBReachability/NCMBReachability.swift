@@ -106,9 +106,11 @@ private func ReachabilityCallback(_ target: SCNetworkReachability,
     _ flags: SCNetworkReachabilityFlags, _ info: UnsafeMutableRawPointer?) {
 //    //電波状況の更新
 //    [NCMBReachability updateFlags:flags];
+    NCMBReachability.updateFlags(flags)
 //
 //    //通信状況に応じてファイルに書き出した処理を実行するメソッドを呼び出す
 //    [[NCMBReachability sharedInstance] reachabilityChanged];
+    NCMBReachability.shared.reachabilityChanged()
 //}
 }
 //
@@ -125,6 +127,7 @@ public class NCMBReachability {
 //}
 //
 //static NCMBReachability *ncmbReachability = nil;
+    private static var ncmbReachability: NCMBReachability? = nil
 //
 //static NSObject*_objForLock = nil;
     private static let objForLock = NSObject()
@@ -142,6 +145,7 @@ public class NCMBReachability {
 //- (NCMBReachability *)init{
     private init() {
 //    self->internetReachabilityRef = SCNetworkReachabilityCreateWithName(NULL, [kHostName UTF8String]);
+        self.internetReachabilityRef = SCNetworkReachabilityCreateWithName(nil, kHostName)
 //    return self;
 //}
     }
@@ -152,15 +156,19 @@ public class NCMBReachability {
 //+(NCMBReachability*)sharedInstance{
     public static let shared: NCMBReachability = {
 //    @synchronized(NCMBReachability.objForLock){
+        synchronized(NCMBReachability.objForLock) {
 //        if (!ncmbReachability){
+            if ncmbReachability == nil {
 //            ncmbReachability = [[NCMBReachability alloc] init];
-        let ncmbReachability = NCMBReachability()
+                ncmbReachability = NCMBReachability()
 //            [ncmbReachability reachabilityWithHostName:kHostName];
-        ncmbReachability.reachability(hostName: kHostName)
+                ncmbReachability!.reachability(hostName: kHostName)
 //        }
+            }
 //    }
+        }
 //    return ncmbReachability;
-        return ncmbReachability
+        return ncmbReachability!
 //}
     }()
 //
@@ -192,8 +200,11 @@ public class NCMBReachability {
 //+(void)updateFlags:(SCNetworkReachabilityFlags)flags{
     public static func updateFlags(_ flags: SCNetworkReachabilityFlags) {
 //    @synchronized(NCMBReachability.objForLock){
+        synchronized(NCMBReachability.objForLock) {
 //        [NCMBReachability sharedInstance]->reachabilityFlags = flags;
+            NCMBReachability.shared.reachabilityFlags = flags
 //    }
+        }
 //}
     }
 //
@@ -201,77 +212,144 @@ public class NCMBReachability {
 // 電波状況が変化したときに保存された処理一覧を取得する
 // */
 //- (void)reachabilityChanged{
+    public func reachabilityChanged() {
 //    dispatch_queue_t sub_queue = dispatch_queue_create("reachabilityChange", NULL);
+        let sub_queue = DispatchQueue(label: "reachabilityChange")
 //    dispatch_async(sub_queue, ^{
+        sub_queue.async {
 //        //ファイルから処理内容を取り出す
 //        NSFileManager *fileManager = [NSFileManager defaultManager];
+            let fileManager = FileManager.default
+            var contents: [String] = []
+            do {
 //        NSArray *contents = [fileManager contentsOfDirectoryAtPath: COMMAND_CACHE_FOLDER_PATH
+                contents = try fileManager.contentsOfDirectory(atPath: COMMAND_CACHE_FOLDER_PATH)
 //                                                             error: NULL];
+            } catch {
+                print(error)
+            }
 //        //ファイルが無い場合は監視を終了
 //        if ([contents count] == 0){
+            if contents.isEmpty {
 //            @synchronized(NCMBReachability.objForLock){
+                synchronized(NCMBReachability.objForLock) {
 //                ncmbReachability = nil;
+                    NCMBReachability.ncmbReachability = nil
 //            }
+                }
 //        } else {
+            } else {
 //            for (NSString *fileName in contents){
+                for fileName in contents {
 //                [self executeCommand:fileName];
+                    self.__executeCommand(fileName)
 //            }
+                }
 //        }
+            }
 //    });
+        }
 //}
+    }
 //
 ///**
 // ファイルに書き出された処理を実行する
 // ファイル削除後にオフラインになっていた場合はファイル復元を復元する
 // */
+    ///### 同期的に処理しているが、非mainスレッドからしか呼ばれないので、そのままにしておく
 //- (void)executeCommand:(NSString*)fileName{
+    private func __executeCommand(_ fileName: String) {
 //    //非同期で更新された電波状況を見て、通信可能であればファイルの処理を実行
 //    if ([self isReachableToTarget]){
+        if self.isReachableToTarget() {
 //
 //        NSFileManager *fileManager = [[NSFileManager alloc] init];
+            let fileManager = FileManager() //### Why not `default`?
 //        NSString *filePath = [NSString stringWithFormat:@"%@%@", COMMAND_CACHE_FOLDER_PATH, fileName];
+            let filePath = COMMAND_CACHE_FOLDER_PATH + fileName
 //        if ([fileManager fileExistsAtPath:filePath]) {
+            if fileManager.fileExists(atPath: filePath) {
+                let fileURL = URL(fileURLWithPath: filePath)
 //
 //            //各ファイルから処理内容を取り出す
+                do {
 //            NSData *data = [NSData dataWithContentsOfFile:filePath];
+                    let data = try Data(contentsOf: fileURL)
 //            NSDictionary *dictForEventually = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+                    let dictForEventually: [String: Any]
+                    if #available(iOS 9.0, *) {
+                        dictForEventually = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as! [String: Any]
+                    } else {
+                        dictForEventually = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
+                    }
 //
 //            NSString *url = [dictForEventually objectForKey:@"path"];
+                    let url = dictForEventually["path"] as! String
 //            NSString *method = [dictForEventually objectForKey:@"method"];
+                    let method = dictForEventually["method"] as! String
 //            NSDictionary *saveDic = nil;
 //            if ([[dictForEventually allKeys] containsObject:@"saveData"]){
 //                saveDic = [dictForEventually objectForKey:@"saveData"];
 //            }
+                    let saveDic = dictForEventually["saveData"] as? [String: Any]
 //
 //            //ファイルを削除する
 //            [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@%@", COMMAND_CACHE_FOLDER_PATH, fileName] error:nil];
+                    _ = try? FileManager.default.removeItem(atPath: filePath)
 //
 //            dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+                    let semaphore = DispatchSemaphore(value: 0)
 //
 //            NCMBRequest *request = [[NCMBRequest alloc] initWithURLString:url
+                    let request = NCMBRequest(urlString: url,
+                                              method: method,
+                                              header: nil,
+                                              body: saveDic)
 //                                                                   method:method
 //                                                                   header:nil
 //                                                                     body:saveDic];
 //            // 通信
 //            NSError __block *sessionError = nil;
+                    var sessionError: NSError? = nil
 //            NCMBURLSession *session = [[NCMBURLSession alloc] initWithRequestSync:request];
+                    let session = NCMBURLSession(__requestSync: request)
 //            [session dataAsyncConnectionWithBlock:^(NSDictionary *responseData, NSError *requestError){
+                    session.dataAsyncConnection {result in
+                        switch result {
 //                if (requestError){
+                        case .failure(let requestError):
 //                    sessionError = requestError;
+                            sessionError = requestError as NSError
+                        default:
+                            break
 //                }
+                        }
 //                dispatch_semaphore_signal(semaphore);
+                        semaphore.signal()
 //            }];
+                    }
 //            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+                    semaphore.wait()
 //
 //            if(sessionError){
+                    if sessionError?.code == NSURLErrorNotConnectedToInternet ||
+                        sessionError?.code == NSURLErrorNetworkConnectionLost {
 //                if (sessionError.code == NSURLErrorNotConnectedToInternet || sessionError.code == NSURLErrorNetworkConnectionLost){
 //                    //オフライン時はファイルを復元する
 //                    [data writeToFile:[NSString stringWithFormat:@"%@%@", COMMAND_CACHE_FOLDER_PATH, fileName] options:NSDataWritingAtomic error:nil];
+                        _ = try? data.write(to: fileURL)
 //                }
+                    }
 //            }
+                } catch {
+                    print(error)
+                }
 //        }
+            }
 //    }
+        }
 //}
+    }
 //
 ///**
 // 電波状況の監視を開始する

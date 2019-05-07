@@ -141,7 +141,8 @@ URLSessionTaskDelegate, URLSessionDataDelegate, URLSessionDownloadDelegate {
 //// 初期化を行う
 //- (id)initWithRequestSync:(NCMBRequest*)request {
     public convenience init(__requestSync request: NCMBRequest) {
-        fatalError("\(#function): Sync methods not supported")
+        //### 非mainスレッドからなら呼んでも良い
+        //fatalError("\(#function): Sync methods not supported")
         self.init(request: request, cachePolicy: .useProtocolCachePolicy)
 //    self.session = [NSURLSession sessionWithConfiguration:self.config delegate:self delegateQueue:nil];
         self.session = URLSession(configuration: self.config, delegate: self, delegateQueue: nil)

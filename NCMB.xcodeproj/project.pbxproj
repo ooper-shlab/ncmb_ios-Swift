@@ -46,6 +46,7 @@
 		D76134DD22814CD700764E5C /* ReadMe.md in Resources */ = {isa = PBXBuildFile; fileRef = D76134DC22814CD700764E5C /* ReadMe.md */; };
 		D76134E022814D3100764E5C /* Readme-original.md in Resources */ = {isa = PBXBuildFile; fileRef = D76134DE22814D3100764E5C /* Readme-original.md */; };
 		D76134E122814D3100764E5C /* LICENSE-original.txt in Resources */ = {isa = PBXBuildFile; fileRef = D76134DF22814D3100764E5C /* LICENSE-original.txt */; };
+		D79A5E282281C31300A2075B /* ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79A5E272281C31300A2075B /* ObjC.swift */; };
 		D7F0D92C227E91A60025EFB0 /* AsyncSeqeuntialTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F0D92B227E91A60025EFB0 /* AsyncSeqeuntialTask.swift */; };
 /* End PBXBuildFile section */
 
@@ -161,6 +162,7 @@
 		D76134DC22814CD700764E5C /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
 		D76134DE22814D3100764E5C /* Readme-original.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = "Readme-original.md"; sourceTree = "<group>"; };
 		D76134DF22814D3100764E5C /* LICENSE-original.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "LICENSE-original.txt"; sourceTree = "<group>"; };
+		D79A5E272281C31300A2075B /* ObjC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjC.swift; sourceTree = "<group>"; };
 		D7F0D92B227E91A60025EFB0 /* AsyncSeqeuntialTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncSeqeuntialTask.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -392,6 +394,7 @@
 		D7F0D92A227E91310025EFB0 /* OOPUtils */ = {
 			isa = PBXGroup;
 			children = (
+				D79A5E272281C31300A2075B /* ObjC.swift */,
 				D7F0D92B227E91A60025EFB0 /* AsyncSeqeuntialTask.swift */,
 			);
 			path = OOPUtils;
@@ -489,6 +492,7 @@
 				D700B68822795F9400579930 /* NCMBURLSession.swift in Sources */,
 				D700B6A82279F0F300579930 /* NCMBAnalytics.swift in Sources */,
 				D700B6B0227A63D500579930 /* Data+hex.swift in Sources */,
+				D79A5E282281C31300A2075B /* ObjC.swift in Sources */,
 				D700B6902279A28800579930 /* NCMBUser.swift in Sources */,
 				D700B6AA2279F27100579930 /* NCMBInstallation.swift in Sources */,
 				D700B6AC2279F62700579930 /* NCMBAnonymousUtils.swift in Sources */,
