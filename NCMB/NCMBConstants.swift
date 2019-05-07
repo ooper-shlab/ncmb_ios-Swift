@@ -36,7 +36,8 @@ public let ERRORDOMAIN = "NCMBErrorDomain"
 public let SDK_VERSION = "3.0.1"
 //
 //#define DATA_MAIN_PATH [NSHomeDirectory() stringByAppendingPathComponent:@"Library/"]
-public let DATA_MAIN_PATH = NSHomeDirectory()+"Library/"
+public let DATA_MAIN_URL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0]
+public let DATA_MAIN_PATH = DATA_MAIN_URL.path
 //#define COMMAND_CACHE_FOLDER_PATH [NSString stringWithFormat:@"%@/Private Documents/NCMB/Command Cache/", DATA_MAIN_PATH]
 public let COMMAND_CACHE_FOLDER_PATH = "\(DATA_MAIN_PATH)/Private Documents/NCMB/Command Cache/"
 //

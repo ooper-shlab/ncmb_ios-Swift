@@ -414,7 +414,6 @@ public class NCMBUser: NCMBObject {
 //
 //@implementation NCMBUser
 //#define DATA_MAIN_PATH [NSHomeDirectory() stringByAppendingPathComponent:@"Library/"]
-    private static let DATA_MAIN_PATH = NSHomeDirectory()+"Library/"
 //#define DATA_CURRENTUSER_PATH [NSString stringWithFormat:@"%@/Private Documents/NCMB/currentUser", DATA_MAIN_PATH]
     private static var DATA_CURRENTUSER_PATH = "\(DATA_MAIN_PATH)/Private Documents/NCMB/currentUser"
 //
@@ -486,6 +485,7 @@ public class NCMBUser: NCMBObject {
 //}
     }
 //
+    //NOT implemented. Use `init()` instead.
 //+ (NCMBUser *)user{
 //    NCMBUser *user = [[NCMBUser alloc] init];
 //    return user;
@@ -599,34 +599,24 @@ public class NCMBUser: NCMBObject {
         isEnableAutomaticUser = false
 //}
     }
-//
-///**
-// 現在ログインしているユーザ情報を取得
-// @return NCMBUser型ログイン中のユーザー
-// */
-//+ (NCMBUser *)currentUser{
+
+    /**
+     現在ログインしているユーザ情報を取得
+     @return NCMBUser型ログイン中のユーザー
+     */
     public static var currentUser: NCMBUser? {
-//    if (currentUser) {
         if _currentUser != nil {
-//        return currentUser;
             return _currentUser
-//    }
         }
-//    currentUser = nil;
         _currentUser = nil
-//
-//    //アプリ再起動などでcurrentUserがnilになった時は端末に保存したユーザ情報を取得、設定する。
-//    if ([[NSFileManager defaultManager] fileExistsAtPath:DATA_CURRENTUSER_PATH isDirectory:nil]) {
+        
+        //アプリ再起動などでcurrentUserがnilになった時は端末に保存したユーザ情報を取得、設定する。
         if FileManager.default.fileExists(atPath: DATA_CURRENTUSER_PATH) {
-//        currentUser = [NCMBUser getFromFileCurrentUser];
             _currentUser = NCMBUser.getFromFileCurrentUser()
-//    }
         }
-//    return currentUser;
         return _currentUser
-//}
     }
-//
+
 //+ (void)automaticCurrentUserWithBlock:(NCMBUserResultBlock)block{
     public static func automaticCurrentUser(block: NCMBUserResultBlock?) {
 //    if ([self currentUser]) {
@@ -722,7 +712,6 @@ public class NCMBUser: NCMBObject {
     public func __signUp() throws {
         fatalError("\(#function): Sync methods not supported")
 //    [self save:error];
-        try self.__save()
 //}
     }
 //
@@ -1190,26 +1179,21 @@ public class NCMBUser: NCMBObject {
         NCMBUser.ncmbLogInAsync(username, mailAddress: nil, password: password, target: target, selector: selector)
 //}
     }
-//
-///**
-// 非同期でログイン(ユーザ名とパスワード)を行う
-// @param username ユーザー名
-// @param password パスワード
-// @param block ログイン後に実行されるblock
-// */
-//+ (void)logInWithUsernameInBackground:(NSString *)username
+
+    /**
+     非同期でログイン(ユーザ名とパスワード)を行う
+     @param username ユーザー名
+     @param password パスワード
+     @param block ログイン後に実行されるblock
+     */
     public static func logInAsync(username: String,
-//                             password:(NSString *)password
-        password: String,
-//                                block:(NCMBUserResultBlock)block{
-        block: NCMBUserResultBlock?) {
-//    [NCMBUser ncmbLogInInBackground:username mailAddress:nil password:password block:block];
+                                  password: String,
+                                  block: NCMBUserResultBlock?) {
         NCMBUser.ncmbLogInAsync(username, mailAddress: nil, password: password, block: block)
-//}
     }
-//
+
 //MARK: - logInWithMailAddress
-//
+
 ///**
 // 同期でログイン(メールアドレスとパスワード)を行う
 // @param email メールアドレス
@@ -1409,78 +1393,53 @@ public class NCMBUser: NCMBObject {
 //    return loginUser;
 //}
     }
-//
-///**
-// 非同期ログイン処理
-// @param username ユーザー名
-// @param email メールアドレス
-// @param password パスワード
-// @param block ログイン後に実行されるblock
-// */
-//+ (void)ncmbLogInInBackground:(NSString *)username
+
+    /**
+     非同期ログイン処理
+     @param username ユーザー名
+     @param email メールアドレス
+     @param password パスワード
+     @param block ログイン後に実行されるblock
+     */
     private static func ncmbLogInAsync(_ username: String?,
-//                  mailAddress:(NSString *)email
-        mailAddress email: String?,
-//                     password:(NSString *)password
-        password: String,
-//                        block:(NCMBUserResultBlock)block{
-        block: NCMBUserResultBlock?) {
-//    //リクエストを作成
-//    NCMBRequest *request = [self createConnectionForLogin:username
+                                       mailAddress email: String?,
+                                       password: String,
+                                       block: NCMBUserResultBlock?) {
+        //リクエストを作成
         let request = self.createConnectionForLogin(username,
-//                                              mailAddress:email
-            mailAddress: email,
-//                                                 password:password];
-            password: password)
-//
-//    // 通信
-//    NCMBURLSession *session = [[NCMBURLSession alloc] initWithRequestAsync:request];
+                                                    mailAddress: email,
+                                                    password: password)
+        
+        // 通信
         let session = NCMBURLSession(requestAsync: request)
-//    [session dataAsyncConnectionWithBlock:^(NSDictionary *responseData, NSError *requestError){
         session.dataAsyncConnection {result in
-//        NCMBUser *loginUser = nil;
             switch result {
-//        if (!requestError){
             case .success(let responseData):
-//            loginUser = [self responseLogIn:responseData];
                 let loginUser = self.responseLogIn(responseData)
-//            [self saveToFileCurrentUser:loginUser];
                 self.saveToFileCurrentUser(loginUser)
                 block?(.success(loginUser))
             case .failure(let requestError):
-//        }
-//        if(block){
-//            block(loginUser,requestError);
                 block?(.failure(requestError))
-//        }
             }
-//    }];
         }
-//}
     }
-//
-///**
-// ログイン系のレスポンス処理
-// @param responseData サーバーからのレスポンスデータ
-// @return NCMBUser型サーバーのデータを反映させたユーザー
-// */
-//+(NCMBUser *)responseLogIn:(NSDictionary *)responseData{
+
+    /**
+     ログイン系のレスポンス処理
+     @param responseData サーバーからのレスポンスデータ
+     @return NCMBUser型サーバーのデータを反映させたユーザー
+     */
     private static func responseLogIn(_ responseData: Any) -> NCMBUser {
-//    NCMBUser *loginUser = [NCMBUser user];
         let loginUser = NCMBUser()
-//    NSMutableDictionary *responseDic = [NSMutableDictionary dictionaryWithDictionary:responseData];
         guard let responseDic = responseData as? [String: Any] else {
             fatalError("ResponseData is not a Dictionary")
         }
-//    [loginUser afterFetch:responseDic isRefresh:YES];
         loginUser.afterFetch(responseDic, isRefresh: true)
-//    return loginUser;
         return loginUser
-//}
     }
-//
-//
-//
+
+
+
 //MARK: - logout
 //
 ///**

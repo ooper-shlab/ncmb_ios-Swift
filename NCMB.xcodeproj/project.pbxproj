@@ -91,8 +91,6 @@
 		8AB2CE341CE315F800F27481 /* NCMBScriptService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCMBScriptService.h; sourceTree = "<group>"; };
 		8AB2CE351CE315F800F27481 /* NCMBScriptService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCMBScriptService.m; sourceTree = "<group>"; };
 		8AB2CE361CE315F800F27481 /* NCMBSubclassing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCMBSubclassing.h; sourceTree = "<group>"; };
-		8AB2CE5C1CE315F800F27481 /* NCMBURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCMBURLConnection.h; sourceTree = "<group>"; };
-		8AB2CE5D1CE315F800F27481 /* NCMBURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCMBURLConnection.m; sourceTree = "<group>"; };
 		8AB2CE5E1CE315F800F27481 /* NCMBUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCMBUser.h; sourceTree = "<group>"; };
 		8AB2CE5F1CE315F800F27481 /* NCMBUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCMBUser.m; sourceTree = "<group>"; };
 		8AB2CE611CE315F800F27481 /* NSDataBase64Encode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDataBase64Encode.h; sourceTree = "<group>"; };
@@ -253,7 +251,6 @@
 				8AB2CE331CE315F800F27481 /* NCMBScriptService */,
 				8AB2CE361CE315F800F27481 /* NCMBSubclassing.h */,
 				D700B69B2279C3FE00579930 /* NCMBSubclassing.swift */,
-				8AB2CE5B1CE315F800F27481 /* NCMBURLConnection */,
 				8AB2CE5E1CE315F800F27481 /* NCMBUser.h */,
 				8AB2CE5F1CE315F800F27481 /* NCMBUser.m */,
 				D700B68F2279A28800579930 /* NCMBUser.swift */,
@@ -300,15 +297,6 @@
 				D700B6B1227A7AA400579930 /* NCMBScriptService.swift */,
 			);
 			path = NCMBScriptService;
-			sourceTree = "<group>";
-		};
-		8AB2CE5B1CE315F800F27481 /* NCMBURLConnection */ = {
-			isa = PBXGroup;
-			children = (
-				8AB2CE5C1CE315F800F27481 /* NCMBURLConnection.h */,
-				8AB2CE5D1CE315F800F27481 /* NCMBURLConnection.m */,
-			);
-			path = NCMBURLConnection;
 			sourceTree = "<group>";
 		};
 		8AB2CE601CE315F800F27481 /* NSDataBase64Encode */ = {
