@@ -1226,7 +1226,7 @@ public class NCMBQuery {
 //    NCMBRequest *request = [self createRequestForSearch:_query countEnableFlag:YES getFirst:NO];
         let request = self.createRequestForSearch(query, isCountEnabled: true, shouldGetFirst: false)
 //    _session = [[NCMBURLSession alloc] initWithRequestSync:request];
-        session = NCMBURLSession(requestAsync: request)
+        session = NCMBURLSession(request: request) //### Not Async?
 //
 //    [_session dataAsyncConnectionWithBlock:^(id response, NSError *error) {
         session?.dataAsyncConnection {result in
@@ -1324,7 +1324,7 @@ public class NCMBQuery {
 //    NCMBRequest *request = [self createRequestForSearch:queryDic countEnableFlag:NO getFirst:YES];
         let request = self.createRequestForSearch(queryDic, isCountEnabled: false, shouldGetFirst: true)
 //    _session = [[NCMBURLSession alloc] initWithRequestSync:request];
-        session = NCMBURLSession(requestAsync: request)
+        session = NCMBURLSession(request: request) //### Not Async?
 //
 //    [_session dataAsyncConnectionWithBlock:^(id response, NSError *error) {
         session!.dataAsyncConnection {result in

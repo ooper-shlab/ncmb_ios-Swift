@@ -540,7 +540,7 @@ public class NCMBFile: NCMBObject {
 //                                                             body:nil];
 //
 //    session = [[NCMBURLSession alloc] initWithRequestSync:request];
-        session = NCMBURLSession(__requestSync: request)
+        session = NCMBURLSession(request: request)
 //    [session fileDownloadAsyncConnectionWithBlock:^(NSData *responseData, NSError *requestError){
         session!.fileDownloadAsyncConnection {result in
             switch result {

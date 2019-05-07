@@ -1825,7 +1825,7 @@ open class NCMBObject: NSObject {
 //    NSError __block *sessionError = nil;
         var sessionError: Error? = nil
 //    NCMBURLSession *session = [[NCMBURLSession alloc] initWithRequestSync:request];
-        let session = NCMBURLSession(__requestSync: request)
+        let session = NCMBURLSession(request: request)
 //    [session dataAsyncConnectionWithBlock:^(NSDictionary *responseData, NSError *requestError){
         session.dataAsyncConnection {response in
             switch response {
@@ -2201,7 +2201,7 @@ open class NCMBObject: NSObject {
 //    NSError __block *sessionError = nil;
         var sessionError: Error? = nil
 //    NCMBURLSession *session = [[NCMBURLSession alloc] initWithRequestSync:request];
-        let session = NCMBURLSession(__requestSync: request)
+        let session = NCMBURLSession(request: request)
 //    [session dataAsyncConnectionWithBlock:^(NSDictionary *responseData, NSError *requestError){
         session.dataAsyncConnection {result in
 //        if (requestError){

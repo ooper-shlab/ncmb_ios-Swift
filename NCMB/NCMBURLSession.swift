@@ -140,9 +140,8 @@ URLSessionTaskDelegate, URLSessionDataDelegate, URLSessionDownloadDelegate {
 //
 //// 初期化を行う
 //- (id)initWithRequestSync:(NCMBRequest*)request {
-    public convenience init(__requestSync request: NCMBRequest) {
-        //### 非mainスレッドからなら呼んでも良い
-        //fatalError("\(#function): Sync methods not supported")
+    ///### コールバックがどのスレッドで実行されるかは保証されない
+    public convenience init(request: NCMBRequest) {
         self.init(request: request, cachePolicy: .useProtocolCachePolicy)
 //    self.session = [NSURLSession sessionWithConfiguration:self.config delegate:self delegateQueue:nil];
         self.session = URLSession(configuration: self.config, delegate: self, delegateQueue: nil)
@@ -152,6 +151,7 @@ URLSessionTaskDelegate, URLSessionDataDelegate, URLSessionDownloadDelegate {
 //
 //// 初期化を行う
 //- (id)initWithRequestAsync:(NCMBRequest*)request {
+    ///### コールバックはメインスレッドで実行される
     public convenience init(requestAsync request: NCMBRequest) {
         self.init(request: request, cachePolicy: .useProtocolCachePolicy)
 //    // コールバックをメインスレッドで実行させるために[NSOperationQueue mainQueue]を設定する

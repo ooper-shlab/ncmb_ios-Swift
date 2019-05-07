@@ -312,7 +312,7 @@ public class NCMBReachability {
 //            NSError __block *sessionError = nil;
                     var sessionError: NSError? = nil
 //            NCMBURLSession *session = [[NCMBURLSession alloc] initWithRequestSync:request];
-                    let session = NCMBURLSession(__requestSync: request)
+                    let session = NCMBURLSession(request: request)
 //            [session dataAsyncConnectionWithBlock:^(NSDictionary *responseData, NSError *requestError){
                     session.dataAsyncConnection {result in
                         switch result {
