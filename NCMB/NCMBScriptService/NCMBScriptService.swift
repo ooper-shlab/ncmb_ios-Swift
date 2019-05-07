@@ -111,7 +111,7 @@ public class NCMBScriptService {
 //@implementation NCMBScriptService
 //
 //- (instancetype)init {
-    private init() {
+    internal init() {
 //    self = [super init];
 //    self.endpoint = NCMBScriptServiceDefaultEndPoint;
         self.endpoint = NCMBScriptServiceDefaultEndPoint
@@ -278,7 +278,7 @@ public class NCMBScriptService {
     }
 //
 //- (NSData *)executeScript:(NSString *)name
-    public func executeScript(_ name: String,
+    public func __executeScript(_ name: String,
 //                   method:(NCMBScriptRequestMethod)method
         method: NCMBScriptRequestMethod,
 //                   header:(NSDictionary *)header

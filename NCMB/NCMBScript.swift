@@ -34,12 +34,15 @@ public class NCMBScript {
 //
 ///// service スクリプト実行APIをリクエストするためのService
 //@property NCMBScriptService* service;
+    public var service: NCMBScriptService
 //
 ///// scriptName スクリプトのファイル名
 //@property NSString *scriptName;
+    public var scriptName: String
 //
 ///// method スクリプトをリクエストする場合のメソッド
 //@property NCMBScriptRequestMethod method;
+    public var method: NCMBScriptRequestMethod
 //
 ///**
 // スクリプト名とリクエストメソッドを指定してNCMBScriptのインスタンスを作成
@@ -107,21 +110,34 @@ public class NCMBScript {
 //@implementation NCMBScript
 //
 //- (instancetype)initWithName:(NSString*)name method:(NCMBScriptRequestMethod)method endpoint:(NSString *)endpoint{
+    public init(name: String, method: NCMBScriptRequestMethod, endpoint: String?) {
 //    if (endpoint != nil) {
+        if let endpoint = endpoint {
 //        _service = [[NCMBScriptService alloc] initWithEndpoint:endpoint];
+            service = NCMBScriptService(endpoint: endpoint)
 //    } else {
+        } else {
 //        _service = [[NCMBScriptService alloc] init];
+            service = NCMBScriptService()
 //    }
+        }
 //    self = [super init];
 //    _scriptName = name;
+        scriptName = name
 //    _method = method;
+        self.method = method
 //    return self;
 //}
+    }
 //
 //+ (instancetype)scriptWithName:(NSString * __nonnull)name method:(NCMBScriptRequestMethod)method{
+    public convenience init(name: String, method: NCMBScriptRequestMethod) {
 //    return [self scriptWithName:name method:method endpoint:nil];
+        self.init(name: name, method: method, endpoint: nil)
 //}
+    }
 //
+    //NOT implemented. Use `init(name:method:endpoint)` instead.
 //+ (instancetype)scriptWithName:(NSString *)name
 //                        method:(NCMBScriptRequestMethod)method
 //                      endpoint:(NSString *)endpoint
@@ -139,9 +155,13 @@ public class NCMBScript {
 //}
 //
 //- (NSData *)execute:(NSDictionary *)data
+    public func __execute(_ data: [String: Any],
 //            headers:(NSDictionary *)headers
+        headers: [String: String],
 //            queries:(NSDictionary *)queries
+        queries: [String: Any]) throws {
 //              error:(NSError **)error{
+        fatalError("\(#function): Sync methods not supported")
 //    return [_service executeScript:_scriptName
 //                     method:_method
 //                     header:headers
@@ -150,18 +170,30 @@ public class NCMBScript {
 //                      error:error];
 //
 //}
+    }
 //
 //- (void)execute:(NSDictionary *)data
+    public func execute(_ data: [String: Any],
 //        headers:(NSDictionary *)headers
+        headers: [String: String],
 //        queries:(NSDictionary *)queries
+        queries: [String: Any],
 //      withBlock:(NCMBScriptExecuteCallback)block {
+        block: @escaping NCMBScriptExecuteCallback) {
 //    [_service executeScript:_scriptName
+        service.executeScript(scriptName,
+                              method: method,
+                              header: headers,
+                              body: data,
+                              query: queries,
+                              block: block)
 //                     method:_method
 //                     header:headers
 //                       body:data
 //                      query:queries
 //                  withBlock:block];
 //}
+    }
 //
 //@end
 }
