@@ -338,12 +338,6 @@ public class NCMBQuery {
 // */
 //- (NSArray *)findObjects:(NSError **)error;
 //
-///**
-// 設定されている検索条件に当てはまるオブジェクトを非同期で取得。取得し終わったら与えられたblockを呼び出す。
-// @param block 信後に実行されるblock。blockは次の引数のシグネチャを持つ必要がある（NSArray *objects, NSError *error）
-// objectsには取得したオブジェクトが渡される。errorにはエラーがなければnilが渡される。
-// */
-//- (void)findObjectsInBackgroundWithBlock:(NCMBArrayResultBlock)block;
 //
 ///**
 // 設定されている検索条件に当てはまるオブジェクトを非同期で取得。取得し終わったら指定されたコールバックを呼び出す。
@@ -387,12 +381,6 @@ public class NCMBQuery {
 // */
 //- (NSInteger)countObjects:(NSError **)error;
 //
-///**
-// 設定されている検索条件に当てはまるオブジェクトの件数を非同期で取得。取得し終わったら与えられたblockを呼び出す。
-// @param block 通信後に実行されるblock。blockは次の引数のシグネチャを持つ必要がある (int number, NSError *error)
-// countには取得した件数が渡される。errorにはエラーがなければnilが渡される。
-// */
-//- (void)countObjectsInBackgroundWithBlock:(NCMBIntegerResultBlock)block;
 //
 ///**
 // 設定されている検索条件に当てはまるオブジェクトの件数を非同期で取得。取得し終わったら指定されたコールバックを呼び出す。
@@ -976,16 +964,17 @@ public class NCMBQuery {
 //
 //    return objects;
 //}
-//
-//- (void)findObjectsInBackgroundWithBlock:(NCMBArrayResultBlock)block{
+
+    /**
+     設定されている検索条件に当てはまるオブジェクトを非同期で取得。取得し終わったら与えられたblockを呼び出す。
+     @param block 信後に実行されるblock。blockは次の引数のシグネチャを持つ必要がある（NSArray *objects, NSError *error）
+     objectsには取得したオブジェクトが渡される。errorにはエラーがなければnilが渡される。
+     */
     public func findObjectsAsync(block: NCMBArrayResultBlock?) {
-//    NCMBRequest *request = [self createRequestForSearch:_query countEnableFlag:NO getFirst:NO];
         let request = self.createRequestForSearch(query, isCountEnabled: false, shouldGetFirst: false)
-//    _session = [[NCMBURLSession alloc] initWithRequestAsync:request];
         session = NCMBURLSession(requestAsync: request)
-//
-//    //非同期通信を実行
-//    [_session dataAsyncConnectionWithBlock:^(id responseData, NSError *error) {
+        
+        //非同期通信を実行
         session!.dataAsyncConnection {result in
             switch result {
             case .failure(let error):
@@ -995,23 +984,14 @@ public class NCMBQuery {
                     let results = responseDic["results"] as? [[String: Any]] else {
                         fatalError("Bad response")
                 }
-//        NSDictionary *responseDic = responseData;
-//        NSMutableArray *results = [NSMutableArray arrayWithArray:[responseDic objectForKey:@"results"]];
-//        NSMutableArray *objects = [NSMutableArray array];
-//        for (NSDictionary *jsonObj in [results objectEnumerator]){
-//            [objects addObject:[NCMBObject convertClass:[NSMutableDictionary dictionaryWithDictionary:jsonObj] ncmbClassName:_ncmbClassName]];
-//        }
                 let objects = results.map{NCMBObject.convertClass($0, ncmbClassName: self.ncmbClassName)}
-//
-//        // コールバック実行
-//        [self executeUserCallback:block array:objects error:error];
+                
+                // コールバック実行
                 block?(.success(objects))
             }
-//    }];
         }
-//}
     }
-//
+
 //- (void)findObjectsInBackgroundWithTarget:(id)target selector:(SEL)selector{
     public func findObjectsAsync(target: AnyObject, selector: Selector) {
 //    if (!target || !selector){
@@ -1220,39 +1200,32 @@ public class NCMBQuery {
 //    return 0;
 //}
     }
-//
-//- (void)countObjectsInBackgroundWithBlock:(NCMBIntegerResultBlock)block{
+
+    /**
+     設定されている検索条件に当てはまるオブジェクトの件数を非同期で取得。取得し終わったら与えられたblockを呼び出す。
+     @param block 通信後に実行されるblock。blockは次の引数のシグネチャを持つ必要がある (int number, NSError *error)
+     countには取得した件数が渡される。errorにはエラーがなければnilが渡される。
+     */
     public func countObjectsAsync(block: @escaping NCMBIntegerResultBlock) {
-//    NCMBRequest *request = [self createRequestForSearch:_query countEnableFlag:YES getFirst:NO];
         let request = self.createRequestForSearch(query, isCountEnabled: true, shouldGetFirst: false)
-//    _session = [[NCMBURLSession alloc] initWithRequestSync:request];
         session = NCMBURLSession(request: request) //### Not Async?
-//
-//    [_session dataAsyncConnectionWithBlock:^(id response, NSError *error) {
+        
         session?.dataAsyncConnection {result in
             switch result {
             case .success(let response):
-//        NSDictionary *responseDic = response;
-//        if ([[responseDic allKeys] containsObject:@"count"]){
                 guard let responseDic = response as? [String: Any],
                     let count = responseDic["count"] as? Int else {
                         block(.failure(NCMBError.badResponse))
                         return
                 }
-//            block([[response objectForKey:@"count"] intValue], error);
                 block(.success(count))
-//        }else{
             case .failure(let error):
-//            block(0, error);
                 block(.failure(error))
-//        }
             }
-//    }];
             
         }
-//}
     }
-//
+
 //- (void)countObjectsInBackgroundWithTarget:(id)target selector:(SEL)selector{
     public func countObjectsAsync(target: AnyObject, selector: Selector) {
 //    if (!target || !selector){
