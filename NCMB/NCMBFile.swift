@@ -171,7 +171,7 @@ public class NCMBFile: NCMBObject {
 // */
 //+ (NCMBQuery *)query;
 //
-//#pragma mark - Unsupported
+//MARK: - Unsupported
 //
 //-(void)refresh:(NSError **)error __attribute__((deprecated));
 //-(void)refreshInBackgroundWithBlock:(NCMBObjectResultBlock)block __attribute__((deprecated));
@@ -217,7 +217,7 @@ public class NCMBFile: NCMBObject {
 //#import "NCMBURLSession.h"
 //#import "NCMBDateFormat.h"
 //
-//#pragma mark - url
+//MARK: - url
 //#define URL_FILE @"files"
     private let URL_FILE = "files"
 //#define URL_PATH @"https://mbaas.api.nifcloud.com/2013-09-01/"
@@ -239,7 +239,7 @@ public class NCMBFile: NCMBObject {
 //static NSMutableData *resultData = nil;
     private static var resultData: Data? = nil
 //
-//#pragma mark - UnsupportedOperationException
+//MARK: - UnsupportedOperationException
 ////非推奨メソッド
 //-(void)refresh:(NSError **)error {
 //    [[NSException exceptionWithName:NSInternalInconsistencyException reason:@"UnsupportedOperation." userInfo:nil] raise];
@@ -345,7 +345,7 @@ public class NCMBFile: NCMBObject {
 //}
     }
 //
-//#pragma mark - init
+//MARK: - init
 //
 ///**
 // 指定したファイルパスで取得したデータと指定したファイル名を持つNCMBFileのインスタンスを生成
@@ -427,7 +427,7 @@ public class NCMBFile: NCMBObject {
 //}
     }
 //
-//#pragma mark - property
+//MARK: - property
 //
 ///**
 // プロパティnameにファイル名を設定する
@@ -463,59 +463,44 @@ public class NCMBFile: NCMBObject {
 //-(void)privateSetIsDirty:(BOOL)flag{
 //    _isDirty = flag;
 //}
-//
-//#pragma mark - save
-//
-///**
-// データを非同期で保存。保存の進度により定期的にprogressBlockを呼び出し、100パーセントに達し保存がし終わったらblockを呼び出す。
-// @param block 保存完了後に実行されるblock。blockは次の引数のシグネチャを持つ必要がある（NSError *error）
-// errorにはエラーがあればエラーのポインタが渡され、なければnilが渡される。
-// @param progressBlock 保存進度により定期的に実行されるblock。blockは次の引数のシグネチャを持つ必要がある（int percentDone）
-// */
-//- (void)saveInBackgroundWithBlock:(NCMBErrorResultBlock)block
+
+    //MARK: - save
+    
+    /**
+     データを非同期で保存。保存の進度により定期的にprogressBlockを呼び出し、100パーセントに達し保存がし終わったらblockを呼び出す。
+     @param block 保存完了後に実行されるblock。blockは次の引数のシグネチャを持つ必要がある（NSError *error）
+     errorにはエラーがあればエラーのポインタが渡され、なければnilが渡される。
+     @param progressBlock 保存進度により定期的に実行されるblock。blockは次の引数のシグネチャを持つ必要がある（int percentDone）
+     */
     public func saveAsync(block: NCMBErrorResultBlock?,
-//                    progressBlock:(NCMBProgressBlock)progressBlock{
-        progressBlock: NCMBProgressBlock?) {
-//
-//    //リクエスト作成
-//    NSError *e = nil;
-//    NSMutableDictionary *operation = [self beforeConnection];
+                          progressBlock: NCMBProgressBlock?) {
+        
+        //リクエスト作成
         guard let operation = self.beforeConnection() else {
             fatalError("operation is nil")
         }
-//    NCMBRequest *request = [self createRequest:operation error:&e];
         let request = try! self.createRequest(operation)
-//
-//    // 通信
-//    session = [[NCMBURLSession alloc] initWithProgress:request progress:progressBlock];
+        
+        // 通信
         session = NCMBURLSession(request, progress: progressBlock)
-//    [session fileUploadAsyncConnectionWithBlock:^(NSDictionary *responseData, NSError *requestError){
         session?.fileUploadAsyncConnection {result in
-//        if (requestError){
             switch result {
             case .failure(let requestError):
-//            [self mergePreviousOperation:operation];
                 self.mergePreviousOperation(operation)
                 block?(requestError)
-//        } else {
             case .success(let responseData):
-//            [self afterSave:responseData operations:operation];
                 self.afterSave(responseData as! [String : Any], operations: operation)
-//        }
-//
-//        // コールバック実行
-//        [self executeUserCallback:block error:requestError];
+                
+                // コールバック実行
                 block?(nil)
             }
-//
-//    }];
+            
         }
-//}
     }
-//
-//
-//
-//#pragma mark - get
+
+
+
+//MARK: - get
 //
 ///**
 // データの取得。必要があればエラーをセットし、取得することもできる。
@@ -666,7 +651,7 @@ public class NCMBFile: NCMBObject {
 //}
     }
 //
-//#pragma mark - create
+//MARK: - create
 //
 ///**
 // ファイル名をTimeStampとUUIDをエンコードした文字列で生成する
@@ -864,7 +849,7 @@ public class NCMBFile: NCMBObject {
 //}
     }
 //
-//#pragma mark - cancel
+//MARK: - cancel
 ///**
 // 通信が行われていた場合に通信のキャンセルを行う
 // */
@@ -883,7 +868,7 @@ public class NCMBFile: NCMBObject {
 //}
     }
 //
-//#pragma mark - query
+//MARK: - query
 //
 //+ (NCMBQuery *)query{
     public override static func query() -> NCMBQuery {
@@ -893,7 +878,7 @@ public class NCMBFile: NCMBObject {
     }
 //
 //
-//#pragma mark - override
+//MARK: - override
 //
 ///**
 // mobile backendにオブジェクトを保存する
@@ -1015,25 +1000,20 @@ public class NCMBFile: NCMBObject {
         return "file"
 //}
     }
-//
-///**
-// オブジェクト更新後に操作履歴とestimatedDataを同期する
-// @param response REST APIのレスポンスデータ
-// @param operations 同期する操作履歴
-// */
-//-(void)afterSave:(NSDictionary*)response operations:(NSMutableDictionary*)operations{
+
+    /**
+     オブジェクト更新後に操作履歴とestimatedDataを同期する
+     @param response REST APIのレスポンスデータ
+     @param operations 同期する操作履歴
+     */
     override func afterSave(_ response: [String : Any], operations: NCMBOperationSet?) {
-//    //NCMBFileのレスポンス処理
-//    [self privateSetNameAndURL:response];
+        //NCMBFileのレスポンス処理
         self.privateSetNameAndURL(response)
-//    [self privateSetIsDirty:NO];
         self.isDirty = false
-//    //通常のレスポンス処理
-//    [super afterSave:response operations:operations];
+        //通常のレスポンス処理
         super.afterSave(response, operations: operations)
-//}
     }
-//
+
 ///**
 // ファイル情報取得時にACLを変換し、保存済みファイルであることを設定する
 // */

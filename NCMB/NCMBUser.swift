@@ -1468,69 +1468,43 @@ public class NCMBUser: NCMBObject {
 //    }
 //}
     }
-//
-///**
-// 非同期でログアウトを行う
-// @param block ログアウトのリクエストをした後に実行されるblock
-// */
-//+ (void)logOutInBackgroundWithBlock:(NCMBErrorResultBlock)block{
+
+    /**
+     非同期でログアウトを行う
+     @param block ログアウトのリクエストをした後に実行されるblock
+     */
     public static func logOutAsync(block: NCMBErrorResultBlock?) {
-//    //リクエストを作成
-//    NCMBRequest *request = [[NCMBRequest alloc] initWithURLString:URL_LOGOUT
+        //リクエストを作成
         let request = NCMBRequest(urlString: NCMBUser.URL_LOGOUT,
                                   method: "GET",
                                   header: nil,
                                   body: nil)
-//                                                           method:@"GET"
-//                                                           header:nil
-//                                                             body:nil];
-//    // 通信
-//    NCMBURLSession *session = [[NCMBURLSession alloc] initWithRequestAsync:request];
+        // 通信
         let session = NCMBURLSession(requestAsync: request)
-//    [session dataAsyncConnectionWithBlock:^(NSDictionary *responseData, NSError *requestError){
         session.dataAsyncConnection {result in
-//        if (!requestError){
             switch result {
-//            if (!requestError) {
             case .success(_):
-//                [self logOutEvent];
                 self.logOutEvent()
                 block?(nil)
-//            }
-//        }
             case .failure(let requestError):
-//        if(block){
-//            block(requestError);
                 block?(requestError)
-//        }
             }
-//    }];
         }
-//}
     }
-//
-///**
-// ログアウトの処理
-// */
-//+ (void)logOutEvent{
+
+    /**
+     ログアウトの処理
+     */
     internal static func logOutEvent() {
-//    if (currentUser) {
         if _currentUser != nil {
-//        currentUser.sessionToken = nil;
             _currentUser?.sessionToken = nil
-//        currentUser = nil;
             _currentUser = nil
-//    }
         }
-//    if ([[NSFileManager defaultManager] fileExistsAtPath:DATA_CURRENTUSER_PATH isDirectory:nil]) {
         if FileManager.default.fileExists(atPath: DATA_CURRENTUSER_PATH) {
-//        [[NSFileManager defaultManager] removeItemAtPath:DATA_CURRENTUSER_PATH error:nil];
             _ = try? FileManager.default.removeItem(atPath: DATA_CURRENTUSER_PATH)
-//    }
         }
-//}
     }
-//
+
 //MARK: requestPasswordResetForEmail
 //
 ///**

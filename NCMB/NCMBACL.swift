@@ -239,25 +239,15 @@ public class NCMBACL {
 //
 //static NCMBACL *defaultACL;
     private static var defaultACL: NCMBACL?
-//
-//#define READ @"read"
+
     private let READ = "read"
-//#define WRITE @"write"
     private let WRITE = "write"
-//
-//#pragma mark init
-//
-//- (instancetype)init{
-    init() {
-//    self = [super init];
-//    if (self){
-//        _dicACL = [NSMutableDictionary dictionary];
-//        _isDirty = NO;
-//    }
-//    return self;
-//}
+
+    //MARK: init
+
+    public init() {
     }
-//
+
 ///**
 // NCMBACLのインスタンスを生成。デフォルトでは全ての権限が許可されている。
 // */
@@ -310,7 +300,7 @@ public class NCMBACL {
 //}
     }
 //
-//#pragma mark Public ACL
+//MARK: Public ACL
 //
 ///** @name Public Access */
 //
@@ -426,7 +416,7 @@ public class NCMBACL {
     }
 //
 //
-//#pragma mark ACL for Role
+//MARK: ACL for Role
 //
 ///** @name Role Access */
 //
@@ -612,7 +602,7 @@ public class NCMBACL {
 //}
     }
 //
-//#pragma mark ACL for User
+//MARK: ACL for User
 //
 ///** @name User Access */
 //
