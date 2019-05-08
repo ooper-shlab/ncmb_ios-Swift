@@ -6,65 +6,32 @@
 //  Copyright © 2019 OOPer's. All rights reserved.
 //
 
-///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-// */
-//
-//#import <Foundation/Foundation.h>
+/*
+ Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
 import UIKit
 #if canImport(UserNotifications)
 import UserNotifications
 #endif
-//
-//#import "NCMBAnalytics.h"
-//#import "NCMBInstallation.h"
-//#import "NCMBPush.h"
-//#import "NCMBAnonymousUtils.h"
-//#import "NCMBQuery.h"
-//#import "NCMBGeoPoint.h"
-//#import "NCMBRelation.h"
-//#import "NCMBRole.h"
-//#import "NCMBACL.h"
-//#import "NCMBError.h"
-//#import "NCMBObject.h"
-//#import "NCMBUser.h"
-//#import "NCMBFile.h"
-//#import "NCMBScript.h"
-//
-//#ifdef NCMBTEST
-//#define NCMBDEBUGLOG(...) NSLog(__VA_ARGS__)
-//#else
-//#define NCMBDEBUGLOG(...)
-//#endif
-//
-//#ifdef NCMBTEST
-//#define NCMBWAIT(...) [NSThread sleepForTimeInterval:__VA_ARGS__]
-//#else
-//#define NCMBWAIT(...)
-//#endif
-//
-//#import "NCMBSubclassing.h"
-//#import "NCMBConstants.h"
-//#import "NCMBReachability.h"
-//
-///**
-// NCMBクラスは、キーの設定やレスポンスバリデーションの設定を行うクラスです。
-// */
-//@interface NCMB : NSObject
+
+/**
+ NCMBクラスは、キーの設定やレスポンスバリデーションの設定を行うクラスです。
+ */
 public class NCMB: NSObject {
-//
+
 ///**
 // アプリケーションキーとクライアントキーの設定
 // @param applicationKey アプリケーションを一意に識別するキー
@@ -125,39 +92,33 @@ public class NCMB: NSObject {
 //#endif
 //
 //@implementation NCMB
-//
-//static NSString *applicationKey = nil;
+
     private static var applicationKey: String? = nil
-//static NSString *clientKey = nil;
     private static var clientKey: String? = nil
-//static BOOL responseValidationFlag = false;
     private static var responseValidationFlag: Bool = false
-//
-//#pragma mark - init
-//
-///**
-// アプリケーションキーとクライアントキーの設定
-// @param applicationKey アプリケーションを一意に識別するキー
-// @param clientKey APIを利用する際に必要となるキー
-// */
-//+ (void)setApplicationKey:(NSString *)appKey clientKey:(NSString *)cliKey{
-    public static func setApplicationKey(_ appKey: String, clientKey cliKey: String) {
-//    [NCMB createFolder];
-        NCMB.createFolder()
-//    applicationKey = appKey;
-        applicationKey = appKey
-//    clientKey = cliKey;
-        clientKey = cliKey
-//    NCMBReachability *reachability = [NCMBReachability sharedInstance];
-        let reachability = NCMBReachability.shared
-//    //[reachability reachabilityWithHostName:@"mbaas.api.nifcloud.com"];
-//    [reachability startNotifier];
-        reachability.startNotifier()
-//
-//}
+
+//MARK: - init
+
+    ///ncmb_swift互換メソッド
+    public static func initialize(applicationKey: String, clientKey: String) {
+        self.setApplicationKey(applicationKey, clientKey: clientKey)
     }
-//
-//#pragma mark - Key
+    /**
+     アプリケーションキーとクライアントキーの設定
+     @param applicationKey アプリケーションを一意に識別するキー
+     @param clientKey APIを利用する際に必要となるキー
+     */
+    public static func setApplicationKey(_ appKey: String, clientKey cliKey: String) {
+        NCMB.createFolder()
+        applicationKey = appKey
+        clientKey = cliKey
+        let reachability = NCMBReachability.shared
+        //[reachability reachabilityWithHostName:@"mbaas.api.nifcloud.com"];
+        reachability.startNotifier()
+        
+    }
+
+//MARK: - Key
 //+ (NSString *)getApplicationKey{
     public static func getApplicationKey() -> String? {
 //    return applicationKey;
@@ -172,7 +133,7 @@ public class NCMB: NSObject {
 //}
     }
 //
-//#pragma mark - ResponseValidation
+//MARK: - ResponseValidation
 //+ (BOOL)getResponseValidationFlag{
     public static func getResponseValidationFlag() -> Bool {
 //    return responseValidationFlag;
@@ -186,15 +147,14 @@ public class NCMB: NSObject {
         responseValidationFlag = checkFlag
 //}
     }
-//
-//#pragma mark - File
-//
-///**
-// SDKで利用するファイルの保存ディレクトリを作成する
-// */
-//+(void)createFolder{
+
+//MARK: - File
+
+/**
+ SDKで利用するファイルの保存ディレクトリを作成する
+ */
     private static func createFolder() {
-//    //ライブラリファイルのパスを取得
+    //ライブラリファイルのパスを取得
 //    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
         let urls = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)
 //    NSString* dirName = [paths objectAtIndex:0];
@@ -214,10 +174,10 @@ public class NCMB: NSObject {
 //
 //}
     }
-//
-///**
-// ファイルの有無をチェックし、無ければ指定されたパスにファイルを作成する
-// */
+
+/**
+ ファイルの有無をチェックし、無ければ指定されたパスにファイルを作成する
+ */
 //+(void)saveDirPath:(NSString*)dirName  str:(NSString*)str {
     private static func saveDirURL(_ dirName: URL, str: String) {
 //    //fileの保存先作成

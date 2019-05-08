@@ -3264,3 +3264,15 @@ open class NCMBObject: NSObject {
 //
 //@end
 }
+
+extension NCMBObject {
+    public subscript(key: String) -> Any? {
+        get {
+            return self.object(forKey: key)
+        }
+        
+        set {
+            self.setObject(newValue, forKey: key)
+        }
+    }
+}
