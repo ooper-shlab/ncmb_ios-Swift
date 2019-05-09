@@ -387,7 +387,7 @@ public class NCMBPush: NCMBObject {
     private static var rv: NCMBRichPushView?
 //
 //+(NCMBQuery*)query{
-    internal override class func query() -> NCMBQuery {
+    public override class func query() -> NCMBQuery {
 //    NCMBQuery *query = [NCMBQuery queryWithClassName:"push"];
         let query = NCMBQuery(className: "push")
 //    return query;
@@ -413,7 +413,7 @@ public class NCMBPush: NCMBObject {
 //    return self;
 //}
     }
-//
+    //
 //#pragma mark - handlilng
 //
 //+(id)stringWithFormat:(NSString*)format arrayArguments:(NSArray*)argsArray{

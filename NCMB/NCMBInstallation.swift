@@ -185,7 +185,7 @@ public class NCMBInstallation: NCMBObject {
 //    return installation;
 //}
     }
-//
+    //
 //+(NCMBInstallation*)installation{
 //    return [[NCMBInstallation alloc] init];
 //}

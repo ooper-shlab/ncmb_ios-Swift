@@ -6,39 +6,33 @@
 //  Copyright © 2019 OOPer's. All rights reserved.
 //
 
-///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-// */
-//
-//#import <Foundation/Foundation.h>
+/*
+ Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
 import Foundation
-//
-//#import "NCMBConstants.h"
-//
-//@class NCMBUser;
-//
-///**
-// NCMBAnonymousUtilsクラスは、匿名ユーザでのログインを管理しているクラスです。
-//
-// 匿名ユーザには、下記のようないくつかの規則があります。
-//
-// ・匿名ユーザは、ユーザ名とパスワードなしでログインできます。
-//
-// ・一度ログアウトした場合は、匿名ユーザを復元することはできません。
-// */
-//@interface NCMBAnonymousUtils : NSObject
+
+/**
+ NCMBAnonymousUtilsクラスは、匿名ユーザでのログインを管理しているクラスです。
+
+ 匿名ユーザには、下記のようないくつかの規則があります。
+
+ ・匿名ユーザは、ユーザ名とパスワードなしでログインできます。
+
+ ・一度ログアウトした場合は、匿名ユーザを復元することはできません。
+ */
 public class NCMBAnonymousUtils {
 //
 ///** @name logIn */
@@ -92,42 +86,26 @@ public class NCMBAnonymousUtils {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // */
-//
-//#import "NCMBAnonymousUtils.h"
-//#import "NCMBUser.h"
-//#import "NCMBUser+Private.h"
-//
-//@implementation NCMBAnonymousUtils
-//
-//#define AUTH_TYPE_ANONYMOUS     @"anonymous"
+
     private static let AUTH_TYPE_ANONYMOUS = "anonymous"
-//
-//#pragma mark link
-//
-///**
-// 指定したユーザが匿名ユーザかどうか判定。匿名ユーザの場合はtrueを返す。
-// @param user 指定するユーザ
-// */
-//+ (BOOL)isLinkedWithUser:(NCMBUser *)user{
+
+    //MARK: link
+    
+    /**
+     指定したユーザが匿名ユーザかどうか判定。匿名ユーザの場合はtrueを返す。
+     @param user 指定するユーザ
+     */
     public static func isLinked(user: NCMBUser) -> Bool {
-//    BOOL isLinkerFlag = NO;
         var isLinkerFlag = false
-//    if ([user objectForKey:@"authData"] && [[user objectForKey:@"authData"] isKindOfClass:[NSDictionary class]]) {
-        if let authData = user.object(forKey: "authData") as? [AnyHashable: Any] {
-//        if ([[user objectForKey:@"authData"] objectForKey:AUTH_TYPE_ANONYMOUS] && user.password == nil) {
+        if let authData = user.object(forKey: "authData") as? [String: Any] {
             if authData[AUTH_TYPE_ANONYMOUS] != nil && user.password == nil {
-//            isLinkerFlag = YES;
                 isLinkerFlag = true
-//        }
             }
-//    }
         }
-//    return isLinkerFlag;
         return isLinkerFlag
-//}
     }
-//
-//#pragma mark logIn
+
+//MARK: logIn
 //
 ///**
 // 匿名ユーザでログイン(同期)。必要があればエラーをセットし、取得することもできる。
@@ -203,7 +181,7 @@ public class NCMBAnonymousUtils {
 //}
     }
 //
-//#pragma mark create
+//MARK: create
 //
 ///**
 // 端末固有のIDを生成する

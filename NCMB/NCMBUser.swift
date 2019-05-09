@@ -484,7 +484,7 @@ public class NCMBUser: NCMBObject {
 //    return self;
 //}
     }
-//
+    //
     //NOT implemented. Use `init()` instead.
 //+ (NCMBUser *)user{
 //    NCMBUser *user = [[NCMBUser alloc] init];

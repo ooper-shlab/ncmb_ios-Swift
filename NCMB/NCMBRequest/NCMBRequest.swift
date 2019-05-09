@@ -83,28 +83,27 @@ public class NCMBRequest {
 //#import "NCMBUser+Private.h"
 //#import <CommonCrypto/CommonCrypto.h>
 //#import "NCMBDateFormat.h"
-//
-//static NSString *const kEndPoint            = @"https://mbaas.api.nifcloud.com";
-private static let kEndPoint = "https://mbaas.api.nifcloud.com"
-//static NSString *const kAPIVersion          = @"2013-09-01";
-private static let kAPIVersion = "2013-09-01"
-//static NSString *const appKeyField       = @"X-NCMB-Application-Key";
-private let appKeyField = "X-NCMB-Application-Key"
-//static NSString *const timestampField    = @"X-NCMB-Timestamp";
-private let timestampField = "X-NCMB-Timestamp"
-//static NSString *const signatureField    = @"X-NCMB-Signature";
-private let signatureField = "X-NCMB-Signature"
-//static NSString *const sessionTokenField = @"X-NCMB-Apps-Session-Token";
-private let sessionTokenField = "X-NCMB-Apps-Session-Token"
-//static NSString *const signatureMethod   = @"SignatureMethod=HmacSHA256";
-private let signatureMethod = "SignatureMethod=HmacSHA256"
-//static NSString *const signatureVersion   = @"SignatureVersion=2";
-private let signatureVersion = "SignatureVersion=2"
-//static NSString *const kSDKVersionFieldName = @"X-NCMB-SDK-Version";
-private let kSDKVersionFieldName = "X-NCMB-SDK-Version"
-//static NSString *const kOSVersionFieldName = @"X-NCMB-OS-Version";
-private let kOSVersionFieldName = "X-NCMB-OS-Version"
-//
+
+    private static let kEndPoint = "https://mbaas.api.nifcloud.com"
+
+    private static let kAPIVersion = "2013-09-01"
+
+    private let appKeyField = "X-NCMB-Application-Key"
+
+    private let timestampField = "X-NCMB-Timestamp"
+
+    private let signatureField = "X-NCMB-Signature"
+
+    private let sessionTokenField = "X-NCMB-Apps-Session-Token"
+
+    private let signatureMethod = "SignatureMethod=HmacSHA256"
+
+    private let signatureVersion = "SignatureVersion=2"
+
+    private let kSDKVersionFieldName = "X-NCMB-SDK-Version"
+
+    private let kOSVersionFieldName = "X-NCMB-OS-Version"
+
 //@implementation NCMBRequest
 //
 //-(instancetype)initWithURL:(NSURL *)url

@@ -238,4 +238,5 @@ public enum NCMBError: Error {
     case badResponse
     case noLoginUser
     case unknownError
+    case empty
 }

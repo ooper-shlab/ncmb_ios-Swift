@@ -245,7 +245,7 @@ public class NCMBACL {
 
     //MARK: init
 
-    public init() {
+    internal init() {
     }
 
 ///**

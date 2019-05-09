@@ -32,26 +32,23 @@ import Foundation
 //@class NCMBACL;
 //
 
-private func toOpaque<FunctionType>(_ f: FunctionType) -> OpaquePointer {
+private func toOpaque<FuncType>(_ f: FuncType) -> OpaquePointer {
     return unsafeBitCast(f, to: OpaquePointer.self)
 }
+
 //MARK: - getter
 //プロパティの型ごとに設定
 
-//static id dynamicGetter(id self, SEL _cmd) {
-private func dynamicGetter(_ this: AnyObject, _ _cmd: Selector) -> AnyObject? {
-//    id result = nil;
-//    NSString* name = NSStringFromSelector(_cmd);
+private let dynamicGetter: @convention(c) (NCMBObject,Selector)-> AnyObject? =
+{ this, _cmd in
     let name = NSStringFromSelector(_cmd)
-//    result = [self valueForKey:@"estimatedData"];
     let result = this.value(forKey: "estimatedData") as AnyObject?
-//    return [result valueForKey:name];
     return result?.value(forKey: name) as AnyObject?
-//}
 }
-//
+
 //static NCMBRelation* dynamicGetterRelation(id self, SEL _cmd) {
-private func dynamicGetterRelation(_ this: AnyObject, _ _cmd: Selector) -> NCMBRelation? {
+private let dynamicGetterRelation: @convention(c) (NCMBObject,Selector) -> NCMBRelation?  =
+{ this, _cmd in
 //    NSString *name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
 //    NCMBRelation *relation = [self relationforKey:name];
@@ -62,7 +59,8 @@ private func dynamicGetterRelation(_ this: AnyObject, _ _cmd: Selector) -> NCMBR
 }
 //
 //static int dynamicGetterInt(id self, SEL _cmd) {
-private func dynamicGetterInt(_ this: AnyObject, _ _cmd: Selector) -> Int32 {
+private let dynamicGetterInt: @convention(c) (NCMBObject,Selector) -> Int32 =
+{ this, _cmd in
 //    id result = nil;
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
@@ -76,7 +74,8 @@ private func dynamicGetterInt(_ this: AnyObject, _ _cmd: Selector) -> Int32 {
 }
 //
 //static float dynamicGetterFloat(id self, SEL _cmd) {
-private func dynamicGetterFloat(_ this: AnyObject, _ _cmd: Selector) -> Float {
+private let dynamicGetterFloat: @convention(c) (NCMBObject,Selector) -> Float =
+{ this, _cmd in
 //    id result = nil;
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
@@ -90,21 +89,23 @@ private func dynamicGetterFloat(_ this: AnyObject, _ _cmd: Selector) -> Float {
 }
 //
 //static BOOL dynamicGetterBOOL(id self, SEL _cmd) {
-private func dynamicGetterBOOL(_ this: AnyObject, _ _cmd: Selector) -> Bool {
+private let dynamicGetterBOOL: @convention(c) (NCMBObject,Selector) -> Bool =
+{ this, _cmd in
 //    id result = nil;
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
 //    result = [self valueForKey:@"estimatedData"];
     let result = this.value(forKey: "estimatedData") as AnyObject?
 //    BOOL flag = [(NSNumber*)[result valueForKey:name] boolValue];
-    let b = (result?.value(forKey: name) as? NSNumber)?.boolValue ?? false
+    let b = result?.value(forKey: name) as? Bool ?? false
 //    return flag;
     return b
 //}
 }
 //
 //static double dynamicGetterDouble(id self, SEL _cmd) {
-private func dynamicGetterDouble(_ this: AnyObject, _ _cmd: Selector) -> Double {
+private let dynamicGetterDouble: @convention(c) (NCMBObject,Selector) -> Double =
+{ this, _cmd in
 //    id result = nil;
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
@@ -118,7 +119,8 @@ private func dynamicGetterDouble(_ this: AnyObject, _ _cmd: Selector) -> Double 
 }
 //
 //static double dynamicGetterLong(id self, SEL _cmd) {
-private func dynamicGetterLong(_ this: AnyObject, _ _cmd: Selector) -> Double {
+private let dynamicGetterLong: @convention(c) (NCMBObject,Selector) -> Double =
+{ this, _cmd in
 //    id result = nil;
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
@@ -132,7 +134,8 @@ private func dynamicGetterLong(_ this: AnyObject, _ _cmd: Selector) -> Double {
 }
 //
 //static short dynamicGetterShort(id self, SEL _cmd) {
-private func dynamicGetterShort(_ this: AnyObject, _ _cmd: Selector) -> Double {
+private let dynamicGetterShort: @convention(c) (NCMBObject,Selector) -> Double =
+{ this, _cmd in
 //    id result = nil;
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
@@ -146,7 +149,8 @@ private func dynamicGetterShort(_ this: AnyObject, _ _cmd: Selector) -> Double {
 }
 //
 //static double dynamicGetterLongLong(id self, SEL _cmd) {
-private func dynamicGetterLongLong(_ this: AnyObject, _ _cmd: Selector) -> Double {
+private let dynamicGetterLongLong: @convention(c) (NCMBObject,Selector) -> Double =
+{ this, _cmd in
 //    id result = nil;
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
@@ -166,19 +170,21 @@ private func propertyName(fromSetter setterName: String) -> String {
 }
 //プロパティの型ごとに設定
 //static void dynamicSetter(id self, SEL _cmd, id value) {
-private func dynamicSetter(_ this: AnyObject, _ _cmd: Selector, _ value: AnyObject?) {
+private let dynamicSetter: @convention(c) (NCMBObject,Selector,AnyObject?)->Void =
+{ this, _cmd, value in
 //    NSString *setter    = NSStringFromSelector(_cmd);
     let setter = NSStringFromSelector(_cmd)
 //    NSString *name  = [[[setter substringWithRange:NSMakeRange(3, 1)] lowercaseString]
 //                       stringByAppendingString:[setter substringWithRange:NSMakeRange(4, setter.length - 5)]];
     let name = propertyName(fromSetter: setter)
 //    [self setObject:value forKey:name];
-    this.set(value, forKey: name)
+    this.setObject(value, forKey: name)
 //}
 }
 //
 //static void dynamicSetterInt(id self, SEL _cmd, int value) {
-private func dynamicSetterInt(_ this: AnyObject, _ _cmd: Selector, _ value: Int32) {
+private let dynamicSetterInt: @convention(c) (NCMBObject,Selector,Int32)->Void =
+{ this, _cmd, value in
 //    NSString *setter    = NSStringFromSelector(_cmd);
     let setter = NSStringFromSelector(_cmd)
 //    NSString *name  = [[[setter substringWithRange:NSMakeRange(3, 1)] lowercaseString]
@@ -187,13 +193,14 @@ private func dynamicSetterInt(_ this: AnyObject, _ _cmd: Selector, _ value: Int3
 //    NSNumber *num = [NSNumber numberWithInt:value];
     let num = NSNumber(value: value)
 //    [self setObject:num forKey:name];
-    this.set(num, forKey: name)
+    this.setObject(num, forKey: name)
 //}
 }
 //
 //
 //static void dynamicSetterFloat(id self, SEL _cmd, float value) {
-private func dynamicSetterFloat(_ this: AnyObject, _ _cmd: Selector, _ value: Float) {
+private let dynamicSetterFloat: @convention(c) (NCMBObject,Selector,Float)->Void =
+{ this, _cmd, value in
 //    NSString *setter    = NSStringFromSelector(_cmd);
     let setter = NSStringFromSelector(_cmd)
 //    NSString *name  = [[[setter substringWithRange:NSMakeRange(3, 1)] lowercaseString]
@@ -202,12 +209,13 @@ private func dynamicSetterFloat(_ this: AnyObject, _ _cmd: Selector, _ value: Fl
 //    NSNumber *num = [NSNumber numberWithFloat:value];
     let num = NSNumber(value: value)
 //    [self setObject:num forKey:name];
-    this.set(num, forKey: name)
+    this.setObject(num, forKey: name)
 //}
 }
 //
 //static void dynamicSetterBOOL(id self, SEL _cmd, BOOL value) {
-private func dynamicSetterBOOL(_ this: AnyObject, _ _cmd: Selector, _ value: Bool) {
+private let dynamicSetterBOOL: @convention(c) (NCMBObject,Selector,Bool)->Void =
+{ this, _cmd, value in
 //    NSString *setter    = NSStringFromSelector(_cmd);
     let setter = NSStringFromSelector(_cmd)
 //    NSString *name  = [[[setter substringWithRange:NSMakeRange(3, 1)] lowercaseString]
@@ -216,12 +224,13 @@ private func dynamicSetterBOOL(_ this: AnyObject, _ _cmd: Selector, _ value: Boo
 //    NSNumber *num = [NSNumber numberWithBool:value];
     let num = NSNumber(value: value)
 //    [self setObject:num forKey:name];
-    this.set(num, forKey: name)
+    this.setObject(num, forKey: name)
 //}
 }
 //
 //static void dynamicSetterDouble(id self, SEL _cmd, double value) {
-private func dynamicSetterDouble(_ this: AnyObject, _ _cmd: Selector, _ value: Double) {
+private let dynamicSetterDouble: @convention(c) (NCMBObject,Selector,Double)->Void =
+{ this, _cmd, value in
 //    NSString *setter    = NSStringFromSelector(_cmd);
     let setter = NSStringFromSelector(_cmd)
 //    NSString *name  = [[[setter substringWithRange:NSMakeRange(3, 1)] lowercaseString]
@@ -230,12 +239,13 @@ private func dynamicSetterDouble(_ this: AnyObject, _ _cmd: Selector, _ value: D
 //    NSNumber *num = [NSNumber numberWithDouble:value];
     let num = NSNumber(value: value)
 //    [self setObject:num forKey:name];
-    this.set(num, forKey: name)
+    this.setObject(num, forKey: name)
 //}
 }
 //
 //static void dynamicSetterLong(id self, SEL _cmd, long int value) {
-private func dynamicSetterLong(_ this: AnyObject, _ _cmd: Selector, _ value: Int) {
+private let dynamicSetterLong: @convention(c) (NCMBObject,Selector,Int)->Void =
+{ this, _cmd, value in
 //    NSString *setter    = NSStringFromSelector(_cmd);
     let setter = NSStringFromSelector(_cmd)
 //    NSString *name  = [[[setter substringWithRange:NSMakeRange(3, 1)] lowercaseString]
@@ -244,11 +254,12 @@ private func dynamicSetterLong(_ this: AnyObject, _ _cmd: Selector, _ value: Int
 //    NSNumber *num = [NSNumber numberWithLong:value];
     let num = NSNumber(value: value)
 //    [self setObject:num forKey:name];
-    this.set(num, forKey: name)
+    this.setObject(num, forKey: name)
 //}
 }
 //static void dynamicSetterShort(id self, SEL _cmd, short value) {
-private func dynamicSetterShort(_ this: AnyObject, _ _cmd: Selector, _ value: Int16) {
+private let dynamicSetterShort: @convention(c) (NCMBObject,Selector,Int16)->Void =
+{ this, _cmd, value in
 //    NSString *setter    = NSStringFromSelector(_cmd);
     let setter = NSStringFromSelector(_cmd)
 //    NSString *name  = [[[setter substringWithRange:NSMakeRange(3, 1)] lowercaseString]
@@ -257,11 +268,12 @@ private func dynamicSetterShort(_ this: AnyObject, _ _cmd: Selector, _ value: In
 //    NSNumber *num = [NSNumber numberWithShort:value];
     let num = NSNumber(value: value)
 //    [self setObject:num forKey:name];
-    this.set(num, forKey: name)
+    this.setObject(num, forKey: name)
 //}
 }
 //static void dynamicSetterLongLong(id self, SEL _cmd, long long int value) {
-private func dynamicSetterLongLong(_ this: AnyObject, _ _cmd: Selector, _ value: Int64) {
+private let dynamicSetterLongLong: @convention(c) (NCMBObject,Selector,Int64)->Void =
+{ this, _cmd, value in
 //    NSString *setter    = NSStringFromSelector(_cmd);
     let setter = NSStringFromSelector(_cmd)
 //    NSString *name  = [[[setter substringWithRange:NSMakeRange(3, 1)] lowercaseString]
@@ -270,7 +282,7 @@ private func dynamicSetterLongLong(_ this: AnyObject, _ _cmd: Selector, _ value:
 //    NSNumber *num = [NSNumber numberWithLongLong:value];
     let num = NSNumber(value: value)
 //    [self setObject:num forKey:name];
-    this.set(num, forKey: name)
+    this.setObject(num, forKey: name)
 //}
 }
 
@@ -468,7 +480,7 @@ open class NCMBObject: NSObject {
 // */
 //- (void)saveEventually:(NCMBErrorResultBlock)callback;
 //
-//#pragma mark refresh
+//MARK: refresh
 //
 ///**
 // 同期通信を利用してmobile backendからobjectIdをキーにしてデータを取得する。
@@ -495,7 +507,7 @@ open class NCMBObject: NSObject {
 // */
 //- (void)refreshInBackgroundWithTarget:(id)target selector:(SEL)selector;
 //
-//#pragma mark fetch
+//MARK: fetch
 //
 ///**
 // 同期通信を利用してmobile backendからobjectIdをキーにしてデータを取得する。
@@ -523,7 +535,7 @@ open class NCMBObject: NSObject {
 //- (void)fetchInBackgroundWithTarget:(id)target selector:(SEL)selector;
 //
 //
-//#pragma mark delete
+//MARK: delete
 //
 ///**
 // 同期通信を利用してオブジェクトをmobile backendとローカル上から削除する。
@@ -602,7 +614,7 @@ open class NCMBObject: NSObject {
 //}
 //@end
 //
-//#pragma mark - getter
+//MARK: - getter
 ////プロパティの型ごとに設定
 //
 //static id dynamicGetter(id self, SEL _cmd) {
@@ -673,7 +685,7 @@ open class NCMBObject: NSObject {
 //    long long int ll = [(NSNumber*)[result valueForKey:name] longLongValue];
 //    return ll;
 //}
-//#pragma mark - setter
+//MARK: - setter
 ////プロパティの型ごとに設定
 //static void dynamicSetter(id self, SEL _cmd, id value) {
 //    NSString *setter    = NSStringFromSelector(_cmd);
@@ -741,22 +753,20 @@ open class NCMBObject: NSObject {
 //@implementation NCMBObject
 //
 //
-//#pragma mark - Subclass
+//MARK: - Subclass
 //+ (id)object{
-    internal class func object() -> NCMBObject {
-        guard let subclassingType = self as? NCMBSubclassing.Type else {
+    open class func object() -> NCMBObject {
+        guard let subclassingType = self as? (NCMBObject&NCMBSubclassing).Type else {
             fatalError("This type is not NCMBSubclassing conformant")
         }
 //    id object = [[[self class] alloc] initWithClassName:[[self class] ncmbClassName]];
-        guard let object = subclassingType.init() as? NCMBObject else {
-            fatalError("This type is not a subclass of NCMBObject")
-        }
+        let object = subclassingType.init() //### `NCMBSubclassing` should override `init()`
 //    return object;
         return object
 //}
     }
 //+ (id)objectWithoutDataWithObjectId:(NSString *)objectId{
-    internal class func objectWithoutData(objectId: String) -> NCMBObject {
+    open class func objectWithoutData(objectId: String) -> NCMBObject {
 //    id object = [[[self class] alloc] init];
         let object = self.init()
 //    [object setObjectId:objectId];
@@ -768,7 +778,7 @@ open class NCMBObject: NSObject {
     }
 //
 //+ (NCMBQuery *)query{
-    internal class func query() -> NCMBQuery {
+    open class func query() -> NCMBQuery {
         guard let subclassingType = self as? NCMBSubclassing.Type else {
             fatalError("This type is not NCMBSubclassing conformant")
         }
@@ -815,7 +825,7 @@ open class NCMBObject: NSObject {
 //                NSString *setterName = [NSString stringWithFormat:@"set%@%@:",
                 let setterName = "set"
                     + propertyName.first!.uppercased()
-                    + propertyName.dropFirst()
+                    + propertyName.dropFirst() + ":"
 //                                        [[propertyName substringToIndex:1] uppercaseString],
 //                                        [propertyName substringFromIndex:1]];
 //
@@ -894,42 +904,28 @@ open class NCMBObject: NSObject {
 //}
     }
 //
-//#pragma mark - 初期化
-//
-////初期化
-//- (id)init{
+    //MARK: - 初期化
+    
+    //初期化
     public convenience required override init() {
-//    return [self initWithClassName:@""];
         self.init(className: "")
-//}
     }
-//
-//
-////クラスネームを指定して初期化
-//- (id)initWithClassName:(NSString *)className{
-    public init(className: String) {
-//    self = [super init];
-//    if (self) {
-//        _ncmbClassName = className;
+
+
+    //クラスネームを指定して初期化
+    public init(className: String) { //### Do not want to make this required...
         self.ncmbClassName = className
-//        //データ操作履歴を管理
-//        operationSetQueue = [[NSMutableArray alloc]init];
-//        [operationSetQueue addObject:[[NSMutableDictionary alloc] init]];
+        //データ操作履歴を管理
         operationSetQueue.append(NCMBOperationSet())
-//
-//        //ローカルデータを管理
-//        estimatedData = [[NSMutableDictionary alloc] init];
-//
-//        //デフォルトACLの設定
-//        _ACL = [NCMBACL ACL];
+        
+        //ローカルデータを管理
+        
+        //デフォルトACLの設定
         _acl = NCMBACL()
-//        //[self setACL:[NCMBACL ACL]];
-//    }
-//    return self;
+        //[self setACL:[NCMBACL ACL]];
         super.init()
-//}
     }
-//
+
 ///**
 // 指定されたクラス名でNCMBObjectのインスタンスを作成する
 // @param className 指定するクラス名
@@ -1068,7 +1064,7 @@ open class NCMBObject: NSObject {
 //}
     }
 //
-//#pragma mark - 型チェック
+//MARK: - 型チェック
 ////入力値の型チェック
 //-(BOOL)isValidType:(id)object{
     private func isValidType(_ object: Any?) -> Bool {
@@ -1112,7 +1108,7 @@ open class NCMBObject: NSObject {
 //}
     }
 //
-//#pragma mark - データ操作
+//MARK: - データ操作
 //
 ///**
 // オブジェクトにACLを設定する
@@ -1557,7 +1553,7 @@ open class NCMBObject: NSObject {
     }
 //
 //
-//#pragma mark - 履歴操作
+//MARK: - 履歴操作
 //
 ////各オペレーション操作実行。履歴データとローカルデータを作成。
 //-(void)performOperation:(NSString *)key byOperation:(id)operation{
@@ -1715,7 +1711,7 @@ open class NCMBObject: NSObject {
 //}
     }
 //
-//#pragma mark - Refresh
+//MARK: - Refresh
 //
 ///**
 // mobile backendからobjectIdをキーにしてデータを取得する。履歴はリセットされる。
@@ -1796,7 +1792,7 @@ open class NCMBObject: NSObject {
 //}
     }
 //
-//#pragma mark - Fetch
+//MARK: - Fetch
 //
 ///**
 // リクエストURLを受け取ってfetchを実行する。
@@ -2105,7 +2101,7 @@ open class NCMBObject: NSObject {
     }
 //
 //
-//#pragma mark - Save
+//MARK: - Save
 //
 ///**
 // オペレーションの中にSetOperationがないかチェックし、SetOperationのvalueが保存前のNCMBObjectの場合は保存を実行する
@@ -2629,7 +2625,7 @@ open class NCMBObject: NSObject {
 //}
     }
 //
-//#pragma mark - delete
+//MARK: - delete
 //
 ///**
 // リクエストURLを受け取ってdeleteを実行する
@@ -2894,7 +2890,7 @@ open class NCMBObject: NSObject {
 //}
     }
 //
-//#pragma mark - convert
+//MARK: - convert
 //
 ///**
 // 操作履歴からDictionary作成
@@ -3185,11 +3181,10 @@ open class NCMBObject: NSObject {
 //     ncmbClassName:(NSString*)ncmbClassName{
 //    NSString *subClassName = @"";
 //    subClassName = [[SubClassHandler sharedInstance] className:ncmbClassName];
-        let subClassName = SubClassHandler.shared.className(ncmbClassName)
+        if let subClassName = SubClassHandler.shared.className(ncmbClassName) {
 //    if (subClassName != nil){
-        if subClassName != nil {
 //        Class vcClass = NSClassFromString(ncmbClassName);
-            let vcClass = NSClassFromString(ncmbClassName) as! NCMBSubclassing.Type
+            let vcClass = NSClassFromString(subClassName) as! NCMBSubclassing.Type
 //        NCMBObject *obj = [vcClass object];
             let obj = vcClass.object()
 //        obj.objectId = [result objectForKey:@"objectId"];
@@ -3229,7 +3224,7 @@ open class NCMBObject: NSObject {
 //    } else if ([ncmbClassName isEqualToString:@"role"]){
         case "role":
 //        NCMBRole *role = [[NCMBRole alloc] initWithClassName:@"role"];
-            let role = NCMBRole(className: "role")
+            let role = NCMBRole()
 //        [role afterFetch:result isRefresh:YES];
             role.afterFetch(result, isRefresh: true)
 //        return role;

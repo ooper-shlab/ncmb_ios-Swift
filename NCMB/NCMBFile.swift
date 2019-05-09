@@ -472,8 +472,8 @@ public class NCMBFile: NCMBObject {
      errorにはエラーがあればエラーのポインタが渡され、なければnilが渡される。
      @param progressBlock 保存進度により定期的に実行されるblock。blockは次の引数のシグネチャを持つ必要がある（int percentDone）
      */
-    public func saveAsync(block: NCMBErrorResultBlock?,
-                          progressBlock: NCMBProgressBlock?) {
+    public func saveAsync(completion: NCMBErrorResultBlock?,
+                          progress: NCMBProgressBlock?) {
         
         //リクエスト作成
         guard let operation = self.beforeConnection() else {
@@ -482,17 +482,17 @@ public class NCMBFile: NCMBObject {
         let request = try! self.createRequest(operation)
         
         // 通信
-        session = NCMBURLSession(request, progress: progressBlock)
+        session = NCMBURLSession(request, progress: progress)
         session?.fileUploadAsyncConnection {result in
             switch result {
             case .failure(let requestError):
                 self.mergePreviousOperation(operation)
-                block?(requestError)
+                completion?(requestError)
             case .success(let responseData):
                 self.afterSave(responseData as! [String : Any], operations: operation)
                 
                 // コールバック実行
-                block?(nil)
+                completion?(nil)
             }
             
         }
@@ -928,7 +928,7 @@ public class NCMBFile: NCMBObject {
 //- (void)saveInBackgroundWithBlock:(NCMBErrorResultBlock)userBlock{
     public override func saveAsync(block userBlock: NCMBErrorResultBlock?) {
 //    [self saveInBackgroundWithBlock:userBlock progressBlock:nil];
-        self.saveAsync(block: userBlock, progressBlock: nil)
+        self.saveAsync(completion: userBlock, progress: nil)
 //}
     }
 //

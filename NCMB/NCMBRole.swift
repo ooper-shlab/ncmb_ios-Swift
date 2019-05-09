@@ -143,9 +143,6 @@ public class NCMBRole: NCMBObject {
 //    return self;
 //}
     }
-    internal override init(className: String) {
-        super.init(className: className)
-    }
 //
 //- (NCMBRole*)initWithRoleName:(NSString*)roleName{
     public convenience init(roleName: String) {
