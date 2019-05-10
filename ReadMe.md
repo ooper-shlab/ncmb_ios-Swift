@@ -7,7 +7,7 @@ Translated by OOPer in cooperation with shlab.jp, since 2019/5/1.
 Based on
 [ncmb_ios](https://github.com/NIFCloud-mbaas/ncmb_ios),
 SDK version 3.0.1 for API version "2013-09-01".
-
+
 (Not based on ncmb_swift.)
 
 All license terms follow the original license shown in LICENSE-original.txt or in each file.

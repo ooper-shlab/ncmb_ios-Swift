@@ -42,8 +42,7 @@ private func toOpaque<FuncType>(_ f: FuncType) -> OpaquePointer {
 private let dynamicGetter: @convention(c) (NCMBObject,Selector)-> AnyObject? =
 { this, _cmd in
     let name = NSStringFromSelector(_cmd)
-    let result = this.value(forKey: "estimatedData") as AnyObject?
-    return result?.value(forKey: name) as AnyObject?
+    return this.object(forKey: name) as AnyObject?
 }
 
 //static NCMBRelation* dynamicGetterRelation(id self, SEL _cmd) {
@@ -65,9 +64,8 @@ private let dynamicGetterInt: @convention(c) (NCMBObject,Selector) -> Int32 =
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
 //    result = [self valueForKey:@"estimatedData"];
-    let result = this.value(forKey: "estimatedData") as AnyObject?
 //    int i = [(NSNumber*)[result valueForKey:name] intValue];
-    let i = (result?.value(forKey: name) as? NSNumber)?.int32Value ?? 0
+    let i = (this.object(forKey: name) as? NSNumber)?.int32Value ?? 0
 //    return i;
     return i
 //}
@@ -80,9 +78,9 @@ private let dynamicGetterFloat: @convention(c) (NCMBObject,Selector) -> Float =
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
 //    result = [self valueForKey:@"estimatedData"];
-    let result = this.value(forKey: "estimatedData") as AnyObject?
 //    float f = [(NSNumber*)[result valueForKey:name] floatValue];
-    let f = (result?.value(forKey: name) as? NSNumber)?.floatValue ?? 0
+    //### 値がNSNumberで保持されている場合、直接`as? Float`とやると、値によっては成功しない
+    let f = (this.object(forKey: name) as? NSNumber)?.floatValue ?? 0
 //    return f;
     return f
 //}
@@ -95,9 +93,8 @@ private let dynamicGetterBOOL: @convention(c) (NCMBObject,Selector) -> Bool =
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
 //    result = [self valueForKey:@"estimatedData"];
-    let result = this.value(forKey: "estimatedData") as AnyObject?
 //    BOOL flag = [(NSNumber*)[result valueForKey:name] boolValue];
-    let b = result?.value(forKey: name) as? Bool ?? false
+    let b = this.object(forKey: name) as? Bool ?? false
 //    return flag;
     return b
 //}
@@ -110,58 +107,96 @@ private let dynamicGetterDouble: @convention(c) (NCMBObject,Selector) -> Double 
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
 //    result = [self valueForKey:@"estimatedData"];
-    let result = this.value(forKey: "estimatedData") as AnyObject?
 //    double d = [(NSNumber*)[result valueForKey:name] doubleValue];
-    let d = (result?.value(forKey: name) as? NSNumber)?.doubleValue ?? 0.0
+    let d = (this.object(forKey: name) as? NSNumber)?.doubleValue ?? 0.0
 //    return d;
     return d
 //}
 }
 //
+//### NCBM sends data through JSON, so that `Int64` may loose some siginicant bits
 //static double dynamicGetterLong(id self, SEL _cmd) {
-private let dynamicGetterLong: @convention(c) (NCMBObject,Selector) -> Double =
+private let dynamicGetterLong: @convention(c) (NCMBObject,Selector) -> Int =
 { this, _cmd in
 //    id result = nil;
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
 //    result = [self valueForKey:@"estimatedData"];
-    let result = this.value(forKey: "estimatedData") as AnyObject?
 //    long int l = [(NSNumber*)[result valueForKey:name] longValue];
-    let l = (result?.value(forKey: name) as? NSNumber)?.intValue ?? 0
+    let l = this.object(forKey: name) as? Int ?? 0
 //    return l;
-    return Double(l)
+    return l
 //}
 }
 //
 //static short dynamicGetterShort(id self, SEL _cmd) {
-private let dynamicGetterShort: @convention(c) (NCMBObject,Selector) -> Double =
+private let dynamicGetterShort: @convention(c) (NCMBObject,Selector) -> Int16 =
 { this, _cmd in
 //    id result = nil;
 //    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
 //    result = [self valueForKey:@"estimatedData"];
-    let result = this.value(forKey: "estimatedData") as AnyObject?
 //    short s = [(NSNumber*)[result valueForKey:name] shortValue];
-    let s = (result?.value(forKey: name) as? NSNumber)?.int16Value ?? 0
+    let s = this.object(forKey: name) as? Int16 ?? 0
 //    return s;
-    return Double(s)
+    return s
 //}
 }
-//
-//static double dynamicGetterLongLong(id self, SEL _cmd) {
-private let dynamicGetterLongLong: @convention(c) (NCMBObject,Selector) -> Double =
+
+//### NCBM sends data through JSON, so that `Int64` may loose some siginicant bits
+private let dynamicGetterLongLong: @convention(c) (NCMBObject,Selector) -> Int64 =
 { this, _cmd in
-//    id result = nil;
-//    NSString* name = NSStringFromSelector(_cmd);
     let name = NSStringFromSelector(_cmd)
-//    result = [self valueForKey:@"estimatedData"];
-    let result = this.value(forKey: "estimatedData") as AnyObject?
-//    long long int ll = [(NSNumber*)[result valueForKey:name] longLongValue];
-    let ll = (result?.value(forKey: name) as? NSNumber)?.int64Value ?? 0
-//    return ll;
-    return Double(ll)
-//}
+    let ll = this.object(forKey: name) as? Int64 ?? 0
+    return ll
 }
+
+private let dynamicGetterChar: @convention(c) (NCMBObject,Selector) -> Int8 =
+{ this, _cmd in
+    let name = NSStringFromSelector(_cmd)
+    let c = this.object(forKey: name) as? Int8 ?? 0
+    return c
+}
+
+private let dynamicGetterUInt: @convention(c) (NCMBObject,Selector) -> UInt32 =
+{ this, _cmd in
+    let name = NSStringFromSelector(_cmd)
+    let ui = this.object(forKey: name) as? UInt32 ?? 0
+    return ui
+}
+
+//###ドキュメントには明示されていないが、NCMBは64-bit符号付きの範囲を超える整数値に対してサーバエラーとなる
+//private let dynamicGetterULong: @convention(c) (NCMBObject,Selector) -> UInt =
+//{ this, _cmd in
+//    let name = NSStringFromSelector(_cmd)
+//    let result = this.value(forKey: "estimatedData") as AnyObject?
+//    let ul = result?.value(forKey: name) as? UInt ?? 0
+//    return ul
+//}
+
+private let dynamicGetterUShort: @convention(c) (NCMBObject,Selector) -> UInt16 =
+{ this, _cmd in
+    let name = NSStringFromSelector(_cmd)
+    let us = this.object(forKey: name) as? UInt16 ?? 0
+    return us
+}
+
+//###ドキュメントには明示されていないが、NCMBは64-bit符号付きの範囲を超える整数値に対してサーバエラーとなる
+//private let dynamicGetterULongLong: @convention(c) (NCMBObject,Selector) -> UInt64 =
+//{ this, _cmd in
+//    let name = NSStringFromSelector(_cmd)
+//    let result = this.value(forKey: "estimatedData") as AnyObject?
+//    let uq = result?.value(forKey: name) as? UInt64 ?? 0
+//    return uq
+//}
+
+private let dynamicGetterUChar: @convention(c) (NCMBObject,Selector) -> UInt8 =
+{ this, _cmd in
+    let name = NSStringFromSelector(_cmd)
+    let uc = this.object(forKey: name) as? UInt8 ?? 0
+    return uc
+}
+
 //MARK: - setter
 
 ///"setUxxx:" -> "lxxx"
@@ -286,6 +321,55 @@ private let dynamicSetterLongLong: @convention(c) (NCMBObject,Selector,Int64)->V
 //}
 }
 
+private let dynamicSetterChar: @convention(c) (NCMBObject,Selector,Int8)->Void =
+{ this, _cmd, value in
+    let setter = NSStringFromSelector(_cmd)
+    let name = propertyName(fromSetter: setter)
+    let num = NSNumber(value: value)
+    this.setObject(num, forKey: name)
+}
+
+private let dynamicSetterUInt: @convention(c) (NCMBObject,Selector,UInt32)->Void =
+{ this, _cmd, value in
+    let setter = NSStringFromSelector(_cmd)
+    let name = propertyName(fromSetter: setter)
+    let num = NSNumber(value: value)
+    this.setObject(num, forKey: name)
+}
+
+//###ドキュメントには明示されていないが、NCMBは64-bit符号付きの範囲を超える整数値に対してサーバエラーとなる
+//private let dynamicSetterULong: @convention(c) (NCMBObject,Selector,UInt)->Void =
+//{ this, _cmd, value in
+//    let setter = NSStringFromSelector(_cmd)
+//    let name = propertyName(fromSetter: setter)
+//    let num = NSNumber(value: value)
+//    this.setObject(num, forKey: name)
+//}
+
+private let dynamicSetterUShort: @convention(c) (NCMBObject,Selector,UInt16)->Void =
+{ this, _cmd, value in
+    let setter = NSStringFromSelector(_cmd)
+    let name = propertyName(fromSetter: setter)
+    let num = NSNumber(value: value)
+    this.setObject(num, forKey: name)
+}
+
+//###ドキュメントには明示されていないが、NCMBは64-bit符号付きの範囲を超える整数値に対してサーバエラーとなる
+//private let dynamicSetterULongLong: @convention(c) (NCMBObject,Selector,UInt64)->Void =
+//{ this, _cmd, value in
+//    let setter = NSStringFromSelector(_cmd)
+//    let name = propertyName(fromSetter: setter)
+//    let num = NSNumber(value: value)
+//    this.setObject(num, forKey: name)
+//}
+
+private let dynamicSetterUChar: @convention(c) (NCMBObject,Selector,UInt8)->Void =
+{ this, _cmd, value in
+    let setter = NSStringFromSelector(_cmd)
+    let name = propertyName(fromSetter: setter)
+    let num = NSNumber(value: value)
+    this.setObject(num, forKey: name)
+}
 
 
 //
@@ -841,45 +925,66 @@ open class NCMBObject: NSObject {
 //                if ([code isEqualToString:@"Ti"]) {
                 case "Ti":
 //                    class_addMethod(self, getterSEL, (IMP) dynamicGetterInt, "@@:");
-                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterInt), "@@:")
+                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterInt), "i@:")
 //                    class_addMethod(self, setterSEL, (IMP) dynamicSetterInt, "v@:@");
-                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterInt), "v@:@")
+                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterInt), "v@:i")
 //                }else if ([code isEqualToString:@"Tf"]) {
+                case "TI":
+                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterUInt), "I@:")
+                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterUInt), "v@:I")
+                //                }else if ([code isEqualToString:@"Tf"]) {
                 case "Tf":
 //                    class_addMethod(self, getterSEL, (IMP) dynamicGetterFloat, "@@:");
-                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterFloat), "@@:")
+                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterFloat), "f@:")
 //                    class_addMethod(self, setterSEL, (IMP) dynamicSetterFloat, "v@:@");
-                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterFloat), "v@:@")
-                case "TB", "Tc":
+                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterFloat), "v@:f")
+                case "TB":
 //                }else if ([code isEqualToString:@"TB"] || [code isEqualToString:@"Tc"]){
 //                    class_addMethod(self, getterSEL, (IMP) dynamicGetterBOOL, "@@:");
-                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterBOOL), "@@:")
+                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterBOOL), "B@:")
 //                    class_addMethod(self, setterSEL, (IMP) dynamicSetterBOOL, "v@:@");
-                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterBOOL), "v@:@")
+                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterBOOL), "v@:B")
 //                }else if ([code isEqualToString:@"Td"]) {
+                case "Tc":
+                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterChar), "c@:")
+                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterChar), "v@:c")
+                case "TC":
+                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterUChar), "C@:")
+                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterUChar), "v@:C")
                 case "Td":
 //                    class_addMethod(self, getterSEL, (IMP) dynamicGetterDouble, "@@:");
-                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterDouble), "@@:")
+                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterDouble), "d@:")
 //                    class_addMethod(self, setterSEL, (IMP) dynamicSetterDouble, "v@:@");
-                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterDouble), "v@:@")
+                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterDouble), "v@:d")
 //                }else if ([code isEqualToString:@"Tl"]) {
                 case "Tl":
 //                    class_addMethod(self, getterSEL, (IMP) dynamicGetterLong, "@@:");
-                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterLong), "@@:")
+                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterLong), "@l:")
 //                    class_addMethod(self, setterSEL, (IMP) dynamicSetterLong, "v@:@");
-                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterLong), "v@:@")
+                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterLong), "v@:l")
 //                }else if ([code isEqualToString:@"Ts"]) {
+                    //###ドキュメントには明示されていないが、NCMBは64-bit符号付きの範囲を超える整数値に対してサーバエラーとなる
+//                case "TL":
+//                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterULong), "L@:")
+//                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterULong), "v@:L")
                 case "Ts":
 //                    class_addMethod(self, getterSEL, (IMP) dynamicGetterShort, "@@:");
-                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterShort), "@@:")
+                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterShort), "s@:")
 //                    class_addMethod(self, setterSEL, (IMP) dynamicSetterShort, "v@:@");
-                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterShort), "v@:@")
+                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterShort), "v@:s")
 //                }else if ([code isEqualToString:@"Tq"]) {
+                case "TS":
+                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterUShort), "S@:")
+                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterUShort), "v@:S")
                 case "Tq":
 //                    class_addMethod(self, getterSEL, (IMP) dynamicGetterLongLong, "@@:");
-                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterLongLong), "@@:")
+                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterLongLong), "q@:")
 //                    class_addMethod(self, setterSEL, (IMP) dynamicSetterLongLong, "v@:@");
-                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterLongLong), "v@:@")
+                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterLongLong), "v@:q")
+                    //###ドキュメントには明示されていないが、NCMBは64-bit符号付きの範囲を超える整数値に対してサーバエラーとなる
+//                case "TQ":
+//                    class_addMethod(self, getterSEL, toOpaque(dynamicGetterULongLong), "Q@:")
+//                    class_addMethod(self, setterSEL, toOpaque(dynamicSetterULongLong), "v@:Q")
 //                } else if (range.location != NSNotFound) {
                 case let code where code.contains("NCMBRelation"):
 //                    class_addMethod(self, getterSEL, (IMP) dynamicGetterRelation, "@@:");
@@ -908,7 +1013,13 @@ open class NCMBObject: NSObject {
     
     //初期化
     public convenience required override init() {
-        self.init(className: "")
+        let className: String
+        if let subclassType = type(of: self) as? NCMBSubclassing.Type {
+            className = subclassType.ncmbClassName
+        } else {
+            className = ""
+        }
+        self.init(className: className)
     }
 
 
