@@ -304,7 +304,6 @@
 			children = (
 				8AB2CE611CE315F800F27481 /* NSDataBase64Encode.h */,
 				8AB2CE621CE315F800F27481 /* NSDataBase64Encode.m */,
-				D700B6AF227A63D500579930 /* Data+hex.swift */,
 			);
 			path = NSDataBase64Encode;
 			sourceTree = "<group>";
@@ -382,6 +381,7 @@
 		D7F0D92A227E91310025EFB0 /* OOPUtils */ = {
 			isa = PBXGroup;
 			children = (
+				D700B6AF227A63D500579930 /* Data+hex.swift */,
 				D79A5E272281C31300A2075B /* ObjC.swift */,
 				D7F0D92B227E91A60025EFB0 /* AsyncSeqeuntialTask.swift */,
 			);

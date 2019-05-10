@@ -2,8 +2,7 @@
 //  NCMBOperation.swift
 //  NCMB
 //
-//  Created by 開発 on 2019/05/01.
-//  Copyright © 2019 OOPer's. All rights reserved.
+//  Translated by OOPer in cooperation with shlab.jp, on 2019/05/01
 //
 
 import Foundation

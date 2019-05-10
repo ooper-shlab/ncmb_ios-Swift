@@ -1,9 +1,8 @@
 //
 //  OOPAsyncSequential.swift
-//  NCMB
+//  OOPUtils
 //
-//  Created by 開発 on 2019/05/05.
-//  Copyright © 2019 OOPer's. All rights reserved.
+//  Created by OOPer in cooperation with shlab.jp, on 2019/05/05.
 //
 
 import Foundation

@@ -2,7 +2,7 @@
 //  NCMBReachability.swift
 //  NCMB
 //
-//  Created by 開発 on 2019/05/01.
+//  Translated by OOPer in cooperation with shlab.jp, on 2019/05/01.
 //  Copyright © 2019 systena. All rights reserved.
 //
 

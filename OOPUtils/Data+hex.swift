@@ -2,7 +2,7 @@
 //  Data+hex.swift
 //  NCMB
 //
-//  Created by 開発 on 2019/05/02.
+//  Created by OOPer on 2019/05/02.
 //  Copyright © 2019 OOPer's. All rights reserved.
 //
 
