@@ -6,7 +6,7 @@
 //
 
 ///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+// Copyright 2017-2020 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,6 +46,11 @@ public class NCMBRequest {
 //                    header:(NSDictionary *)headers
 //                      body:(NSDictionary *)body;
 //
+//-(instancetype)initWithURLStringForUser:(NSString *)urlString
+//                    method:(NSString *)method
+//                    header:(NSDictionary *)headers
+//                      body:(NSDictionary *)body;
+//
 //-(instancetype)initWithURL:(NSURL *)url
 //                    method:(NSString *)method
 //                    header:(NSDictionary *)headers
@@ -62,7 +67,7 @@ public class NCMBRequest {
 //+(NSString *)encodingSigneture:(NSString *)strForSignature  method:(NCMBRequest *)request;
 //@end
 ///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+// Copyright 2017-2020 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -220,6 +225,37 @@ public class NCMBRequest {
 //}
     }
 //
+//-(instancetype)initWithURLStringForUser:(NSString *)urlString
+//                          method:(NSString *)method
+//                          header:(NSDictionary *)headers
+//                            body:(NSDictionary *)body
+//{
+    public convenience init(urlStringForUser urlString: String, method: String, header headers: [String: String]?, body: [String: Any]?) {
+//    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@/%@",kEndPoint,kAPIVersion,urlString]];
+        let url = URL(string: "\(NCMBRequest.kEndPoint)/\(NCMBRequest.kAPIVersion)/\(urlString)")!
+//    NSData *bodyData = nil;
+        var bodyData: Data? = nil
+//    if (body != nil) {
+        if let body = body {
+//        NSError *error = nil;
+            do {
+//        bodyData = [NSJSONSerialization dataWithJSONObject:body
+                bodyData = try JSONSerialization.data(withJSONObject: body, options: [])
+//                                                   options:kNilOptions
+//                                                     error:&error];
+//        if (error) {
+            } catch {
+//            [NSException raise:NSInvalidArgumentException format:@"body data is invalid json format."];
+                fatalError("body data is invalid json format.")
+//        }
+            }
+//    }
+        }
+//    return [self initWithURL:url method:method header:headers bodyData:bodyData];
+        self.init(url: url, method: method, header: headers, bodyData: bodyData)
+//}
+    }
+//
 //+(NSString *)returnTimeStamp{
     public static func returnTimeStamp() -> String {
 //    return [[NCMBDateFormat getIso8601DateFormat] stringFromDate:[NSDate date]];
@@ -259,7 +295,7 @@ public class NCMBRequest {
         self.clientKey = clientKey
 //
 //    NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:YES];
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
 //    // components.pathはデコードされた値が返却されるのでエンコードする(POST時のファイル名が日本語の場合などに必要)
 //    NSString *path = [components.path stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@"#[]@!()*+,;\"<>\\%^`{|} \b\t\n\a\r"] invertedSet]];
         let allowed = CharacterSet(charactersIn: "#[]@!()*+,;\"<>\\%^`{|} \u{8}\t\n\u{7}\r").inverted

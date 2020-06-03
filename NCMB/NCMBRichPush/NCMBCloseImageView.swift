@@ -3,11 +3,10 @@
 //  NCMB
 //
 //  Translated by OOPer in cooperation with shlab.jp, on 2019/05/02.
-//  Copyright © 2019 systena. All rights reserved.
 //
 
 ///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+// Copyright 2017-2020 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +32,7 @@ let IMAGE_SIZE: CGFloat = 15
 public class NCMBCloseImageView: UIView {
 //@end
 ///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+// Copyright 2017-2020 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

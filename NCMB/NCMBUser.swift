@@ -6,7 +6,7 @@
 //
 
 ///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+// Copyright 2017-2020 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -153,6 +153,13 @@ public class NCMBUser: NCMBObject {
 // @param block サインアップ後に実行されるblock
 // */
 //- (void)signUpWithFacebookToken:(NSDictionary *)facebookInfo withBlock:(NCMBErrorResultBlock)block;
+//
+///**
+// appleのauthDataをもとにニフクラ mobile backendへの会員登録(ログイン)を行う
+// @param appleInfo apple認証に必要なauthData
+// @param block サインアップ後に実行されるblock
+// */
+//- (void)signUpWithAppleToken:(NSDictionary *)appleInfo withBlock:(NCMBErrorResultBlock)block;
 //
 //MARK: requestAuthenticationMail
 ///** @name requestAuthenticationMail */
@@ -359,15 +366,23 @@ public class NCMBUser: NCMBObject {
 //                    withBlock:(NCMBErrorResultBlock)block;
 //
 ///**
+// ログイン中のユーザー情報に、appleの認証情報を紐付ける
+// @param appleInfo appleの認証情報
+// @param block 既存のauthDataのapple情報のみ更新後実行されるblock。エラーがあればエラーのポインタが、なければnilが渡される。
+// */
+//- (void)linkWithAppleToken:(NSDictionary *)appleInfo
+//                    withBlock:(NCMBErrorResultBlock)block;
+//
+///**
 // 会員情報に、引数で指定したtypeの認証情報が含まれているか確認する
-// @param type 認証情報のtype（googleもしくはtwitter、facebook、anonymous）
+// @param type 認証情報のtype（googleもしくはtwitter、facebook、apple、anonymous）
 // @return 引数で指定したtypeの会員情報が含まれている場合はYESを返す
 // */
 //- (BOOL)isLinkedWith:(NSString *)type;
 //
 ///**
 // 会員情報から、引数で指定したtypeの認証情報を削除する
-// @param type 認証情報のtype（googleもしくはtwitter、facebook、anonymous）
+// @param type 認証情報のtype（googleもしくはtwitter、facebook、apple、anonymous）
 // @param block エラー情報を返却するblock エラーがあればエラーのポインタが、なければnilが渡される。
 // */
 //- (void)unlink:(NSString *)type
@@ -384,7 +399,7 @@ public class NCMBUser: NCMBObject {
 //
 //@end
 ///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+// Copyright 2017-2020 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -434,6 +449,8 @@ public class NCMBUser: NCMBObject {
     private let AUTH_TYPE_FACEBOOK              = "facebook"
 //#define AUTH_TYPE_ANONYMOUS             @"Anonymous"
     private let AUTH_TYPE_ANONYMOUS             = "Anonymous"
+//#define AUTH_TYPE_APPLE                 @"apple"
+    private let AUTH_TYPE_APPLE                 = "apple"
 //
 //static NCMBUser *currentUser = nil;
     private static var _currentUser: NCMBUser? = nil
@@ -760,6 +777,14 @@ public class NCMBUser: NCMBObject {
         self.setObject(userAuthData, forKey: "authData")
 //    [self signUpInBackgroundWithBlock:^(NSError *error) {
         self.signUpAsync {error in
+//        if (error) {
+            if error != nil {
+//            [userAuthData removeObjectForKey:type];
+                userAuthData.removeValue(forKey: type)
+//            [self setObject:userAuthData forKey:@"authData"];
+                self.setObject(userAuthData, forKey: "authData")
+//        }
+            }
 //        [self executeUserCallback:block error:error];
             block?(error)
 //    }];
@@ -800,6 +825,24 @@ public class NCMBUser: NCMBObject {
     public func signUp(facebookToken facebookInfo: [String: Any], block: NCMBErrorResultBlock?) {
 //    [self signUpWithToken:facebookInfo withType:AUTH_TYPE_FACEBOOK withBlock:block];
         self.signUp(token: facebookInfo, type: AUTH_TYPE_FACEBOOK, block: block)
+//}
+    }
+//
+///**
+// appleのauthDataをもとにニフクラ mobile backendへの会員登録(ログイン)を行う
+// @param appleInfo apple認証に必要なauthData
+// @param block サインアップ後に実行されるblock
+// */
+//- (void)signUpWithAppleToken:(NSDictionary *)appleInfo withBlock:(NCMBErrorResultBlock)block{
+    public func signUp(appleToken appleInfo: [String: Any], block: NCMBErrorResultBlock?) {
+//    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+        let bundleIdentifier = Bundle.main.bundleIdentifier ?? ""
+//    NSDictionary *appleInfoParam = [appleInfo mutableCopy];
+        var appleInfoParam = appleInfo
+//    [appleInfoParam setValue:bundleIdentifier forKey:@"client_id"];
+        appleInfoParam["client_id"] = bundleIdentifier
+//    [self signUpWithToken:appleInfoParam withType:AUTH_TYPE_APPLE withBlock:block];
+        self.signUp(token: appleInfoParam, type: AUTH_TYPE_APPLE, block: block)
 //}
     }
 //
@@ -1328,17 +1371,21 @@ public class NCMBUser: NCMBObject {
 //    //pathの作成
 //    NSString *path = @"";
 //    for (int i = 0; i< [sortedQueryArray count]; i++){
+//        NSString * query = [sortedQueryArray[i] stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@"#[]@!&()*+,;\"<>\\%^`{|} \b\t\n\a\r"] invertedSet]];
+        func escape(query: String) -> String {
+            query.addingPercentEncoding(withAllowedCharacters: CharacterSet(charactersIn: "#[]@!&()*+,;\"<>\\%^`{|} \u{08}\t\n\u{07}\r").inverted)!
+        }
 //        if (i == 0){
-//            path = [path stringByAppendingString:[NSString stringWithFormat:@"%@", sortedQueryArray[i]]];
+//            path = [path stringByAppendingString:[NSString stringWithFormat:@"%@", query]];
 //        } else {
-//            path = [path stringByAppendingString:[NSString stringWithFormat:@"&%@", sortedQueryArray[i]]];
+//            path = [path stringByAppendingString:[NSString stringWithFormat:@"&%@", query]];
 //        }
 //    }
-        let path = sortedQueryArray.joined(separator: "&")
+        let path = sortedQueryArray.map(escape(query:)).joined(separator: "&")
 //    NSString *url = [NSString stringWithFormat:@"login?%@", path];
         let url = "login?\(path)"
-//    NCMBRequest *request = [[NCMBRequest alloc] initWithURLString:url
-        let request = NCMBRequest(urlString: url,
+//    NCMBRequest *request = [[NCMBRequest alloc] initWithURLStringForUser:url
+        let request = NCMBRequest(urlStringForUser: url,
                                   method: "GET",
                                   header: nil,
                                   body: nil)
@@ -1684,8 +1731,12 @@ public class NCMBUser: NCMBObject {
 // */
 //- (void)afterDelete{
     override func afterDelete() {
-//    [super afterDelete];
-        super.afterDelete()
+//    if ([NCMBUser currentUser]!= nil && [NCMBUser.currentUser.objectId isEqualToString:self.objectId]) {
+        if let user = NCMBUser.currentUser, user.objectId == self.objectId {
+//        [NCMBUser logOutEvent];
+            NCMBUser.logOutEvent()
+//    }
+        }
 //    self.userName = nil;
         self.userName = nil
 //    self.password = nil;
@@ -1694,8 +1745,8 @@ public class NCMBUser: NCMBObject {
         self.sessionToken = nil
 //    self.mailAddress = nil;
         self.mailAddress = nil
-//    [NCMBUser logOutEvent];
-        NCMBUser.logOutEvent()
+//    [super afterDelete];
+        super.afterDelete()
 //}
     }
 //
@@ -1733,16 +1784,7 @@ public class NCMBUser: NCMBObject {
     override func afterSave(_ response: [String : Any], operations: NCMBOperationSet?) {
 //    [super afterSave:response operations:operations];
         super.afterSave(response, operations: operations)
-//    BOOL isHasTokenKey = NO;
-        var hasTokenKey = false
-//    if ([response objectForKey:@"sessionToken"]){
-        if let sessionToken = response["sessionToken"] as? String {
-//        [self setSessionToken:[response objectForKey:@"sessionToken"]];
-            self.sessionToken = sessionToken
-//        isHasTokenKey = YES;
-            hasTokenKey = true
-//    }
-        }
+//
 //    //会員新規登録の有無
 //    //if ([response objectForKey:@"createDate"]&&![response objectForKey:@"updateDate"]){
 //    if ([response objectForKey:@"createDate"] && [response objectForKey:@"updateDate"]){
@@ -1790,11 +1832,22 @@ public class NCMBUser: NCMBObject {
                 estimatedData["authData"] = converted
 //        }
             }
+//        if ([response objectForKey:@"sessionToken"]){
+            if let token = response["sessionToken"] as? String {
+//            [self setSessionToken:[response objectForKey:@"sessionToken"]];
+                self.sessionToken = token
+//        }
+            }
+//
+//        [NCMBUser saveToFileCurrentUser:self];
+            NCMBUser.saveToFileCurrentUser(self)
 //    }
         }
 //
-//    if([self isEqual:[NCMBUser currentUser]] || isHasTokenKey){
-        if self === NCMBUser.currentUser || hasTokenKey {
+//    if ([self.objectId isEqualToString:[NCMBUser currentUser].objectId]) {
+        if self.objectId == NCMBUser.currentUser?.objectId {
+//        self.sessionToken = [NCMBUser currentUser].sessionToken;
+            self.sessionToken = NCMBUser.currentUser?.sessionToken
 //        [NCMBUser saveToFileCurrentUser:self];
             NCMBUser.saveToFileCurrentUser(self)
 //    }
@@ -1882,8 +1935,26 @@ public class NCMBUser: NCMBObject {
     }
 //
 ///**
+// ログイン中のユーザー情報に、appleの認証情報を紐付ける
+// @param appleInfo appleの認証情報
+// @param block 既存のauthDataのapple情報のみ更新後実行されるblock。エラーがあればエラーのポインタが、なければnilが渡される。
+// */
+//- (void)linkWithAppleToken:(NSDictionary *)appleInfo withBlock:(NCMBErrorResultBlock)block{
+    public func link(appleToken appleInfo: [String: Any], block: @escaping NCMBErrorResultBlock) {
+//    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+        let bundleIdentifier = Bundle.main.bundleIdentifier ?? ""
+//    NSDictionary *appleInfoParam = [appleInfo mutableCopy];
+        var appleInfoParam = appleInfo
+//    [appleInfoParam setValue:bundleIdentifier forKey:@"client_id"];
+        appleInfoParam["client_id"] = bundleIdentifier
+//    [self linkWithToken:appleInfoParam withType:AUTH_TYPE_APPLE withBlock:block];
+        self.link(token: appleInfo, type: AUTH_TYPE_APPLE, block: block)
+//}
+    }
+//
+///**
 // 会員情報に、引数で指定したtypeの認証情報が含まれているか確認する
-// @param type 認証情報のtype（googleもしくはtwitter、facebook、anonymous）
+// @param type 認証情報のtype（googleもしくはtwitter、facebook、apple、anonymous）
 // @return 引数で指定したtypeの会員情報が含まれている場合はYESを返す
 // */
 //- (BOOL)isLinkedWith:(NSString *)type{
@@ -1896,10 +1967,12 @@ public class NCMBUser: NCMBObject {
         case AUTH_TYPE_GOOGLE,
              AUTH_TYPE_TWITTER,
              AUTH_TYPE_FACEBOOK,
-             AUTH_TYPE_ANONYMOUS:
+             AUTH_TYPE_ANONYMOUS,
+             AUTH_TYPE_APPLE:
 //        || [type isEqualToString:AUTH_TYPE_TWITTER]
 //        || [type isEqualToString:AUTH_TYPE_FACEBOOK]
-//        || [type isEqualToString:AUTH_TYPE_ANONYMOUS])
+//        || [type isEqualToString:AUTH_TYPE_ANONYMOUS]
+//        || [type isEqualToString:AUTH_TYPE_APPLE])
 //    {
 //        if ([self objectForKey:@"authData"] && [[self objectForKey:@"authData"] isKindOfClass:[NSDictionary class]]) {
             if let authData = self.object(forKey: "authData") as? [String: Any] {
@@ -1922,7 +1995,7 @@ public class NCMBUser: NCMBObject {
 //
 ///**
 // 会員情報から、引数で指定したtypeの認証情報を削除する
-// @param type 認証情報のtype（googleもしくはtwitter、facebook、anonymous）
+// @param type 認証情報のtype（googleもしくはtwitter、facebook、apple、anonymous）
 // @param block エラー情報を返却するblock エラーがあればエラーのポインタが、なければnilが渡される。
 // */
 //- (void)unlink:(NSString *)type withBlock:(NCMBErrorResultBlock)block{

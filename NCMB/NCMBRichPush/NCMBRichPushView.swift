@@ -7,7 +7,7 @@
 //
 
 ///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+// Copyright 2017-2020 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,10 +25,11 @@
 //#import <Foundation/Foundation.h>
 //#import <UIKit/UIKit.h>
 import UIKit
+//#import <Webkit/Webkit.h>
 import WebKit
 //
-//@interface NCMBRichPushView : UIWebView
-class NCMBRichPushView: UIView, WKNavigationDelegate, WKUIDelegate {
+//@interface NCMBRichPushView : UIViewController
+class NCMBRichPushView: UIViewController, WKNavigationDelegate {
 //
 //- (void) appearWebView:(UIInterfaceOrientation)interfaceOrientation url:(NSString*)richUrl;
 //- (void) sizingWebView:(UIInterfaceOrientation)interfaceOrientation;
@@ -36,7 +37,7 @@ class NCMBRichPushView: UIView, WKNavigationDelegate, WKUIDelegate {
 //
 //@end
 ///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+// Copyright 2017-2020 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -78,7 +79,7 @@ class NCMBRichPushView: UIView, WKNavigationDelegate, WKUIDelegate {
     private var cv: UIView?
 //@property (nonatomic) UIView *uv; //ui view
     private var uv: UIView?
-//@property (nonatomic) UIWebView *wv; // web view
+//@property (nonatomic) WKWebView *wv; // web view
     private var wv: WKWebView?
 //@property (nonatomic) UIButton* closeButton;
     private var closeButton: UIButton?
@@ -125,7 +126,7 @@ class NCMBRichPushView: UIView, WKNavigationDelegate, WKUIDelegate {
 //    self.uv = [[UIView alloc]init];
         self.uv = UIView()
 //
-//    self.wv = [[UIWebView alloc]init];
+//    self.wv = [[WKWebView alloc]init];
         let config = WKWebViewConfiguration()
         self.wv = WKWebView(frame: .zero, configuration: config)
 //
@@ -215,12 +216,8 @@ class NCMBRichPushView: UIView, WKNavigationDelegate, WKUIDelegate {
 //    self.uv.clipsToBounds = YES;
         self.uv?.clipsToBounds = true
 //
-//    //set webpage size to webview size
-//    self.wv.scalesPageToFit = YES;
-//
-//    self.wv.delegate = self;
+//    self.wv.navigationDelegate = self;
         self.wv?.navigationDelegate = self
-        self.wv?.uiDelegate = self
 //
 //    //add subview to main view
 //    [window.rootViewController.view addSubview:self.cv];
@@ -237,13 +234,22 @@ class NCMBRichPushView: UIView, WKNavigationDelegate, WKUIDelegate {
 //    }];
         }
 //
+//    NSURL *url = [NSURL URLWithString:richUrl];
+        let url = URL(string: richUrl)!
+//    NSURLRequest *req = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:5];
+        let req = URLRequest(url: url,
+                             cachePolicy: .reloadIgnoringLocalCacheData,
+                             timeoutInterval: 5)
+//    [self.wv loadRequest:req];
+        self.wv?.load(req)
 //}
     }
 //
-//-(void)loadRequest:(NSURLRequest *)request{
-    internal func load(request: URLRequest) {
-//    [self.wv loadRequest:request];
-        self.wv?.load(request)
+//- (WKNavigation *)loadRequest:(NSURLRequest *)request{
+    @discardableResult
+    internal func load(request: URLRequest) -> WKNavigation? {
+//    return [self.wv loadRequest:request];
+        return self.wv?.load(request)
 //}
     }
 //
@@ -408,7 +414,7 @@ class NCMBRichPushView: UIView, WKNavigationDelegate, WKUIDelegate {
 //}
     }
 //
-//- (void)webViewDidFinishLoad:(UIWebView *)webView{
+//- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation{
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
 //    [self endWebViewLoading];
         self.endWebViewLoading()
@@ -417,20 +423,16 @@ class NCMBRichPushView: UIView, WKNavigationDelegate, WKUIDelegate {
 //
 //# pragma webview delegate
 //
-//- (BOOL) webView:(UIWebView*) webView
-//shouldStartLoadWithRequest:(NSURLRequest*) request
-//  navigationType:(UIWebViewNavigationType) navigationType
-//{
+//- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler{
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
 //    [self startWebViewLoading];
         self.startWebViewLoading()
-//
-//    return YES;
+//    decisionHandler(WKNavigationActionPolicyAllow);
         decisionHandler(.allow)
 //}
     }
 //
-//- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error{
+//- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error{
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
 //    if ([error code] != NSURLErrorCancelled){
         if (error as NSError).code != NSURLErrorCancelled {
@@ -442,7 +444,7 @@ class NCMBRichPushView: UIView, WKNavigationDelegate, WKUIDelegate {
 //        NSString *html = @"<html><body><h1>ページを開けません。</h1></body></html>";
             let html = "<html><body><h1>ページを開けません。</h1></body></html>"
 //        NSData *bodyData = [html dataUsingEncoding:NSUTF8StringEncoding];
-//        [self.wv loadData:bodyData MIMEType:@"text/html" textEncodingName:@"utf-8" baseURL:[[NSURL alloc]init]];
+//        [self.wv loadData:bodyData MIMEType:@"text/html" characterEncodingName:@"utf-8" baseURL:[[NSURL alloc]init]];
             self.wv!.loadHTMLString(html, baseURL: nil)
 //    }
         }

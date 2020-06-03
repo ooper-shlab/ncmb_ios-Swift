@@ -156,6 +156,7 @@
 		D700B6C7227A813900579930 /* NCMBDeleteOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NCMBDeleteOperation.swift; sourceTree = "<group>"; };
 		D700B6C9227A815E00579930 /* NCMBIncrementOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NCMBIncrementOperation.swift; sourceTree = "<group>"; };
 		D700B6CB227A817800579930 /* NCMBRelationOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NCMBRelationOperation.swift; sourceTree = "<group>"; };
+		D71EF7FF2487DD360084886F /* NCMB_umbrella.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NCMB_umbrella.h; sourceTree = "<group>"; };
 		D76134DA228134C800764E5C /* CloseImageGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseImageGenerator.swift; sourceTree = "<group>"; };
 		D76134DC22814CD700764E5C /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
 		D76134DE22814D3100764E5C /* Readme-original.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = "Readme-original.md"; sourceTree = "<group>"; };
@@ -198,6 +199,7 @@
 		8AB2CDFD1CE3153F00F27481 /* NCMB */ = {
 			isa = PBXGroup;
 			children = (
+				D71EF7FF2487DD360084886F /* NCMB_umbrella.h */,
 				99AE1AC91F94B82A005EA065 /* NCMBURLSession */,
 				9DB041421EFCDD6E00BDEFFC /* NCMBRequest */,
 				8AB2CDFE1CE3153F00F27481 /* NCMB.h */,

@@ -107,10 +107,11 @@ public class NCMBInstallation: NCMBObject {
     public func setDeviceToken(from deviceTokenData: Data) {
 //    if ([deviceTokenData isKindOfClass:[NSData class]] && [deviceTokenData length] != 0){
         if !deviceTokenData.isEmpty {
-//        NSMutableString *tokenId = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@",deviceTokenData]];
-//        [tokenId setString:[tokenId stringByReplacingOccurrencesOfString:@" " withString:@""]]; //余計な文字を消す
-//        [tokenId setString:[tokenId stringByReplacingOccurrencesOfString:@"<" withString:@""]];
-//        [tokenId setString:[tokenId stringByReplacingOccurrencesOfString:@">" withString:@""]];
+//        const unsigned char *dataBuffer = deviceTokenData.bytes;
+//        NSMutableString *token  = [NSMutableString stringWithCapacity:(deviceTokenData.length * 2)];
+//        for (int i = 0; i < deviceTokenData.length; ++i) {
+//            [token appendFormat:@"%02x", dataBuffer[i]];
+//        }
             let tokenId = deviceTokenData.hexString
 //        [self setObject:tokenId forKey:@"deviceToken"];
             self.setObject(tokenId, forKey: "deviceToken")
@@ -118,6 +119,12 @@ public class NCMBInstallation: NCMBObject {
         } else {
 //        [self setObject:nil forKey:@"deviceToken"];
             self.setObject(nil, forKey: "deviceToken")
+//        #if DEBUG
+            #if DEBUG
+//            NSLog(@"不正なデバイストークのため、端末登録を行いません");
+                NSLog("不正なデバイストークのため、端末登録を行いません");
+//        #endif
+            #endif
 //    }
         }
 //}

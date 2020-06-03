@@ -6,7 +6,7 @@
 //
 
 ///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+// Copyright 2017-2020 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -351,7 +351,7 @@ public class NCMBPush: NCMBObject {
 //
 //end
 ///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+// Copyright 2017-2020 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -444,7 +444,7 @@ public class NCMBPush: NCMBObject {
 //    NSString *cancelButtonTitle = "Close";
         let cancelButtonTitle = "Close" //### No localizing?
 //    NSString *actionButtonTitle = nil;
-        var actionButtonTitle: String? = nil
+        //var actionButtonTitle: String? = nil
 //    UIAlertView *alert = nil;
 //    UIAlertController *alertController = nil;
 //    if ([[dicAps objectForKey:"alert"] isKindOfClass:[NSNull class]]) {
@@ -458,7 +458,7 @@ public class NCMBPush: NCMBObject {
         } else if let alertDic = dicAps["alert"] as? [String: Any] {
 //        NSMutableDictionary *dicParams = [NSMutableDictionary dictionary];
 //        [dicParams setDictionary:[dicAps objectForKey:"alert"]];
-            var dicParams = alertDic
+            let dicParams = alertDic
 //        if ([dicParams objectForKey:"body"]) {
             if let body = dicParams["body"] as? String {
 //            message = [dicParams objectForKey:"body"];
@@ -473,11 +473,11 @@ public class NCMBPush: NCMBObject {
 //        }
             }
 //        if ([dicParams objectForKey:"action-loc-key"]) {
-            if let actionLocKey = dicParams["action-loc-key"] as? String {
+            //if let actionLocKey = dicParams["action-loc-key"] as? String {
 //            actionButtonTitle = NSLocalizedString([dicParams objectForKey:"action-loc-key"], "action-loc-key");
-                actionButtonTitle = NSLocalizedString(actionLocKey, comment: "action-loc-key")
+                //actionButtonTitle = NSLocalizedString(actionLocKey, comment: "action-loc-key")
 //        }
-            }
+            //}
 //        alert = [[UIAlertView alloc] initWithTitle:nil message:message delegate:nil cancelButtonTitle:cancelButtonTitle otherButtonTitles:actionButtonTitle,nil];
 //    }
         }

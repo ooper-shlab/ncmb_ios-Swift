@@ -6,7 +6,7 @@
 //
 
 ///*
-// Copyright 2017-2018 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
+// Copyright 2017-2020 FUJITSU CLOUD TECHNOLOGIES LIMITED All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import Foundation
 //#pragma mark - error
 //#define ERRORDOMAIN @"NCMBErrorDomain"
 public let ERRORDOMAIN = "NCMBErrorDomain"
-//#define SDK_VERSION @"3.0.1"
-public let SDK_VERSION = "3.0.1"
+//#define SDK_VERSION @"3.1.0"
+public let SDK_VERSION = "3.1.0"
 //
 //#define DATA_MAIN_PATH [NSHomeDirectory() stringByAppendingPathComponent:@"Library/"]
 public let DATA_MAIN_URL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0]
