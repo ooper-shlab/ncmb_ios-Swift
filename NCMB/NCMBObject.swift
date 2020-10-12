@@ -2689,7 +2689,8 @@ open class NCMBObject: NSObject {
     public func saveCommandToFile(_ localDic: [String: Any]) throws {
 //    //ファイルに保存処理を書き出す
 //    NSData *localData = [NSKeyedArchiver archivedDataWithRootObject:localDic];
-        let localData = NSKeyedArchiver.archivedData(withRootObject: localDic)
+        //let localData = NSKeyedArchiver.archivedData(withRootObject: localDic)
+        let localData = try NSKeyedArchiver.archivedData(withRootObject: localDic, requiringSecureCoding: false)
 //
 //    //ファイル名はタイムスタンプ_オペレーションのアドレス
 //    NSString *path = [NSString stringWithFormat:@"%@%@_%p", COMMAND_CACHE_FOLDER_PATH, [[NCMBDateFormat getFileNameDateFormat] stringFromDate:[NSDate date]], localDic];
