@@ -35,7 +35,7 @@ import Foundation
 // NCMBQueryは、mobile backend上のデータを検索するためのクラスです。
 // */
 //@interface NCMBQuery : NSObject
-public class NCMBQuery {
+open class NCMBQuery {
 //
 /////検索を行うデータストアのクラス名
 //@property (nonatomic)NSString *ncmbClassName;
