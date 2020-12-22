@@ -758,7 +758,7 @@ open class NCMBQuery {
     }
 //
 //+(NCMBQuery*)orQueryWithSubqueries:(NSArray *)queries{
-    public func orQuery(subqueries queries: [NCMBQuery]) -> NCMBQuery? {
+    public class func orQuery(subqueries queries: [NCMBQuery]) -> NCMBQuery? {
 //    NSString *className = @"";
         var className = ""
 //    NSMutableArray *jsonQueries = [NSMutableArray array];
