@@ -539,7 +539,8 @@ open class NCMBQuery {
 // @param operand 検索条件
 // */
 //- (void)setCondition:(id)object forKey:(NSString*)key operand:(NSString*)operand{
-    private func setCondition(_ object: Any, forKey key: String, operator ope: String?) {
+    //### Make this public to allow more functions creating query
+    public func setCondition(_ object: Any, forKey key: String, operator ope: String?) {
 //    if ([operand isEqualToString:@"$eq"]){
         if ope == "$eq" {
 //        //equalToの場合、オペランドはないので値を直接設定する
