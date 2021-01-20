@@ -487,7 +487,7 @@ open class NCMBQuery {
 //}
 //
 //- (id)initWithClassName:(NSString*)className{
-    public init(className: String) {
+    public required init(className: String) {
 //    self = [super init];
 //    if (self){
 //        _query = [NSMutableDictionary dictionary];
@@ -656,12 +656,18 @@ open class NCMBQuery {
         self.setCondition(array, forKey: key, operator: "$in")
 //}
     }
+    public func `where`(key: String, in array: [Any]) {
+        self.setCondition(array, forKey: key, operator: "$in")
+    }
 //
 //- (void)whereKey:(NSString *)key notContainedIn:(NSArray *)array{
     public func `where`(key: String, notContainedIn array: [Any]) {
 //    [self setCondition:array forKey:key operand:@"$nin"];
         self.setCondition(array, forKey: key, operator: "$nin")
 //}
+    }
+    public func `where`(key: String, notIn array: [Any]) {
+        self.setCondition(array, forKey: key, operator: "$nin")
     }
 //
 //- (void)whereKey:(NSString *)key containedInArrayTo:(NSArray *)array{
@@ -670,6 +676,9 @@ open class NCMBQuery {
         self.setCondition(array, forKey: key, operator: "$inArray")
 //}
     }
+    public func `where`(key: String, anyContainedIn array: [Any]) {
+        self.setCondition(array, forKey: key, operator: "$inArray")
+    }
 //
 //- (void)whereKey:(NSString *)key notContainedInArrayTo:(NSArray *)array{
     public func `where`(key: String, notContainedInArrayTo array: [Any]) {
@@ -677,12 +686,18 @@ open class NCMBQuery {
         self.setCondition(array, forKey: key, operator: "$ninArray")
 //}
     }
+    public func `where`(key: String, notAnyContainedIn array: [Any]) {
+        self.setCondition(array, forKey: key, operator: "$ninArray")
+    }
 //
 //- (void)whereKey:(NSString *)key containsAllObjectsInArrayTo:(NSArray *)array{
     public func `where`(key: String, containsAllObjectsInArrayTo array: [Any]) {
 //    [self setCondition:array forKey:key operand:@"$all"];
         self.setCondition(array, forKey: key, operator: "$all")
 //}
+    }
+    public func `where`(key: String, containsAll array: [Any]) {
+        self.setCondition(array, forKey: key, operator: "$all")
     }
 //
 //- (void)whereKey:(NSString *)key matchesKey:(NSString *)otherKey inQuery:(NCMBQuery *)query{
@@ -759,7 +774,7 @@ open class NCMBQuery {
     }
 //
 //+(NCMBQuery*)orQueryWithSubqueries:(NSArray *)queries{
-    public class func orQuery(subqueries queries: [NCMBQuery]) -> NCMBQuery? {
+    public class func orQuery(subqueries queries: [NCMBQuery]) -> Self? {
 //    NSString *className = @"";
         var className = ""
 //    NSMutableArray *jsonQueries = [NSMutableArray array];
@@ -787,7 +802,7 @@ open class NCMBQuery {
 //    }
         }
 //    NCMBQuery *query = [NCMBQuery queryWithClassName:className];
-        let query = NCMBQuery(className: className)
+        let query = Self(className: className)
 //    [query setCondition:jsonQueries forKey:@"$or" operand:nil];
         query.setCondition(jsonQueries, forKey: "$or", operator: nil)
 //
