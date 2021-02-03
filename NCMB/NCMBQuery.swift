@@ -1507,7 +1507,7 @@ open class NCMBQuery {
 //                [orderStr appendFormat:@",%@", _orderFieldsAry[i]];
 //            }
 //        }
-            let orderStr = orderFieldsAry.joined(separator: ",")
+            let orderStr = "order=" + orderFieldsAry.joined(separator: ",")
 //        [queryArray addObject:orderStr];
             queryArray.append(orderStr)
 //    }
