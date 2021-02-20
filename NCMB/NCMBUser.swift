@@ -596,9 +596,9 @@ public class NCMBUser: NCMBObject {
 //+ (NSString *)getCurrentSessionToken{
     internal static func getCurrentSessionToken() -> String? {
 //    if (currentUser != nil) {
-        if currentUser != nil {
+        if let user = _currentUser {
 //        return currentUser.sessionToken;
-            return currentUser!.sessionToken
+            return user.sessionToken
 //    }
         }
 //    return nil;
@@ -1664,6 +1664,7 @@ public class NCMBUser: NCMBObject {
             let url = URL(fileURLWithPath: DATA_CURRENTUSER_PATH)
             try json.write(to: url, options: .atomic)
 //    currentUser = user;
+            _currentUser = user
         } catch let e {
             print(e)
         }
