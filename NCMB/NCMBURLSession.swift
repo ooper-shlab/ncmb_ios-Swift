@@ -487,6 +487,10 @@ URLSessionTaskDelegate, URLSessionDataDelegate, URLSessionDownloadDelegate {
 //
 //    // 各機能クラスに結果を渡す。File取得APIの場合はNSData型を返却。それ以外のAPIはNSDictionary型を返却。
 //    id response = [self convertResponse:self.responseData response:httpURLResponse error:&error];
+        if let error = error {
+            self.block?(.failure(error))
+            return
+        }
         let result = Result<Any, Error> {
             try self.convert(self.responseData, response: httpURLResponse)
         }
